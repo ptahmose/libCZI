@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
 
-project(libCZI)
-
 IF(UNIX)
 # linking with 'thread' is necessary if we use std::thread and related under Linux it seems
 #   otherwise - the program simply crashes (no build-error)
