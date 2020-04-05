@@ -1,0 +1,14 @@
+#pragma once
+
+#define LIBCZI_VERSION_MAJOR @libCZI_VERSION_MAJOR@
+#define LIBCZI_VERSION_MINOR @libCZI_VERSION_MINOR@
+
+// if the host system is a big-endian system, this is "1", otherwise 0
+#define LIBCZI_ISBIGENDIANHOST @libCZI_ISBIGENDIANHOST@
+
+// if the include-file "endian.h" is available, then this is "1", otherwise 0
+#define LIBCZI_HAVE_ENDIAN_H @libCZI_HAVE_ENDIAN_H@
+
+#define LIBCZI_CXX_COMPILER_IDENTIFICATION @libCZI_CompilerIdentification@
+
+

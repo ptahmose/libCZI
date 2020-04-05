@@ -91,6 +91,9 @@ public:
 	static void Fill_Bgr48(int w, int h, void* ptr, int stride, std::uint16_t b, std::uint16_t g, std::uint16_t r);
 	static void Fill_GrayFloat(int w, int h, void* ptr, int stride, float v);
 	static void RGB48ToBGR48(int w, int h, std::uint16_t* ptr, int stride);
+
+	static std::shared_ptr<libCZI::IBitmapData> ConvertToBigEndian(libCZI::IBitmapData* source);
+
 private:
 	
 	template <libCZI::PixelType tSrcPixelType, libCZI::PixelType tDstPixelType, typename tPixelConverter, typename tFlt>

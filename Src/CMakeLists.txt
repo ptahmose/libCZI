@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.0.2)
 
 IF(UNIX)
 # linking with 'thread' is necessary if we use std::thread and related under Linux it seems
@@ -6,6 +6,29 @@ IF(UNIX)
    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread -std=c++11 -fPIC -D_FILE_OFFSET_BITS=64")
    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D__ANSI__ -fPIC -D_FILE_OFFSET_BITS=64")
 ENDIF(UNIX)
+
+include(GNUInstallDirs)
+
+# add the folder "cmake" (in this repo) to CMake's module path
+list (APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
+include (TestLargeFile)
+test_large_files (_LARGEFILES)
+
+include (TestBigEndian)
+TEST_BIG_ENDIAN(IS_BIG_ENDIAN)
+if (IS_BIG_ENDIAN)
+ message("identified a big-endian platform")
+else()
+ message("identified a little-endian platform")
+endif()
+
+check_include_file_CXX(endian.h HAVE_ENDIAN_H)
+if (NOT DEFINED HAVE_ENDIAN_H OR NOT HAVE_ENDIAN_H)
+	set(HAVE_ENDIAN_H 0)
+endif()
+message("check for endian.h -> ${HAVE_ENDIAN_H}") 
+
 
 option(LIBCZI_BUILD_DYNLIB "Build dynamic library 'libCZI'." ON)
 option(LIBCZI_BUILD_STATICLIB "Build static library 'libCZI'." ON)

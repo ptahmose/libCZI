@@ -25,6 +25,7 @@
 #include "MD5Sum.h"
 #include "utilities.h"
 #include "libCZI.h"
+#include "Site.h"
 
 using namespace libCZI;
 using namespace std;
@@ -330,4 +331,44 @@ using namespace std;
 	stringstream ss;
 	ss << "Operation not implemented for source pixeltype='" << libCZI::Utils::PixelTypeToInformalString(srcPixelType) << "' and destination pixeltype='" << libCZI::Utils::PixelTypeToInformalString(dstPixelType) << "'.";
 	throw LibCZIException(ss.str().c_str());
+}
+
+/*static*/std::shared_ptr<libCZI::IBitmapData> CBitmapOperations::ConvertToBigEndian(libCZI::IBitmapData * source)
+{
+	auto pxltype = source->GetPixelType();
+	auto dst = GetSite()->CreateBitmap(pxltype, source->GetWidth(), source->GetHeight());
+
+	ScopedBitmapLockerP lckSrc{ source };
+	ScopedBitmapLockerSP lckDst{ dst };
+	switch (pxltype)
+	{
+	case PixelType::Gray16:
+		for (uint32_t y = 0; y < source->GetHeight(); ++y)
+		{
+			const uint16_t* pSrc = (const uint16_t*)(((const char*)lckSrc.ptrDataRoi) + y * ((ptrdiff_t)lckSrc.stride));
+			uint16_t* pDst = (uint16_t*)(((char*)lckDst.ptrDataRoi) + y * ((ptrdiff_t)lckDst.stride));
+			for (uint32_t x = 0; x < source->GetWidth(); ++x)
+			{
+				*(pDst + x) = ((*(pSrc + x)) << 8) | ((*(pSrc + x)) >> 8);
+			}
+		}
+
+		break;
+	case PixelType::Bgr48:
+		for (uint32_t  y = 0; y < source->GetHeight(); ++y)
+		{
+			const uint16_t* pSrc = (const uint16_t*)(((const char*)lckSrc.ptrDataRoi) + y * ((ptrdiff_t)lckSrc.stride));
+			uint16_t * pDst = (uint16_t*)(((char*)lckDst.ptrDataRoi) + y * ((ptrdiff_t)lckDst.stride));
+			for (uint32_t x = 0; x < 3*source->GetWidth(); ++x)
+			{
+				*(pDst + x) = ((*(pSrc + x)) << 8) | ((*(pSrc + x)) >> 8);
+			}
+		}
+
+		break;
+	default:
+		throw std::logic_error("Function not yet implemented for the specified pixeltype.");
+	}
+
+	return dst;
 }

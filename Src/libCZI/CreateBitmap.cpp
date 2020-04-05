@@ -24,6 +24,8 @@
 #include "bitmapData.h"
 #include "Site.h"
 #include "libCZI.h"
+#include "BitmapOperations.h"
+#include "inc_libCZI_Config.h"
 
 using namespace libCZI;
 
@@ -40,21 +42,35 @@ static std::shared_ptr<libCZI::IBitmapData> CreateBitmapFromSubBlock_Uncompresse
 	size_t size;
 	CSharedPtrAllocator sharedPtrAllocator(subBlk->GetRawData(ISubBlock::MemBlkType::Data, &size));
 
-	// TODO: how can the stride be derived...? Add at least some more consistency checks
+	const auto& sbBlkInfo = subBlk->GetSubBlockInfo();
+
+	// TODO: How exactly shoud the stride be derived? It seems that stride must be exactly linesize.
+	const std::uint32_t stride = sbBlkInfo.physicalSize.w * CziUtils::GetBytesPerPel(sbBlkInfo.pixelType);
+	if (stride * sbBlkInfo.physicalSize.h > size)
+	{
+		throw std::logic_error("insufficient size of subblock");
+	}
+
 	auto sb = CBitmapData<CSharedPtrAllocator>::Create(
 		sharedPtrAllocator,
-		subBlk->GetSubBlockInfo().pixelType,
-		subBlk->GetSubBlockInfo().physicalSize.w,
-		subBlk->GetSubBlockInfo().physicalSize.h,
-		subBlk->GetSubBlockInfo().physicalSize.w * CziUtils::GetBytesPerPel(subBlk->GetSubBlockInfo().pixelType));
+		sbBlkInfo.pixelType,
+		sbBlkInfo.physicalSize.w,
+		sbBlkInfo.physicalSize.h,
+		stride);
+
+#if LIBCZI_ISBIGENDIANHOST
+	if (!CziUtils::IsPixelTypeEndianessAgnostic(subBlk->GetSubBlockInfo().pixelType))
+	{
+		return CBitmapOperations::ConvertToBigEndian(sb.get());
+	}
+#endif
 
 	return sb;
 }
 
 std::shared_ptr<libCZI::IBitmapData> libCZI::CreateBitmapFromSubBlock(ISubBlock* subBlk)
 {
-	auto sbInfo = subBlk->GetSubBlockInfo();
-	switch (sbInfo.mode)
+	switch (subBlk->GetSubBlockInfo().mode)
 	{
 	case CompressionMode::JpgXr:
 		return CreateBitmapFromSubBlock_JpgXr(subBlk);
