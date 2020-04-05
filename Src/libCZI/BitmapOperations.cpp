@@ -43,7 +43,7 @@ using namespace std;
 	size_t lineLength = bm->GetWidth() * CziUtils::GetBytesPerPel(bm->GetPixelType());
 	for (uint32_t y = 0; y < bm->GetHeight(); ++y)
 	{
-		const std::uint8_t* ptr = ((const std::uint8_t*)lck.ptrDataRoi) + y*((ptrdiff_t)lck.stride);
+		const std::uint8_t* ptr = ((const std::uint8_t*)lck.ptrDataRoi) + y * ((ptrdiff_t)lck.stride);
 		md5sum.update(ptr, lineLength);
 	}
 
@@ -255,7 +255,7 @@ using namespace std;
 {
 	for (int y = 0; y < h; ++y)
 	{
-		void* p = ((char*)ptr) + (y*((ptrdiff_t)stride));
+		void* p = ((char*)ptr) + (y * ((ptrdiff_t)stride));
 		memset(p, val, stride);
 	}
 }
@@ -264,7 +264,7 @@ using namespace std;
 {
 	for (int y = 0; y < h; ++y)
 	{
-		std::uint16_t* p = (std::uint16_t*)(((char*)ptr) + (y*((ptrdiff_t)stride)));
+		std::uint16_t* p = (std::uint16_t*)(((char*)ptr) + (y * ((ptrdiff_t)stride)));
 		for (int x = 0; x < w; ++x)
 		{
 			*(p + x) = val;
@@ -276,7 +276,7 @@ using namespace std;
 {
 	for (int y = 0; y < h; ++y)
 	{
-		std::uint8_t* p = (std::uint8_t*)(((char*)ptr) + (y*((ptrdiff_t)stride)));
+		std::uint8_t* p = (std::uint8_t*)(((char*)ptr) + (y * ((ptrdiff_t)stride)));
 		for (int x = 0; x < w; ++x)
 		{
 			*(p + x * 3 + 0) = b;
@@ -290,7 +290,7 @@ using namespace std;
 {
 	for (int y = 0; y < h; ++y)
 	{
-		std::uint16_t* p = (std::uint16_t*)(((char*)ptr) + (y*((ptrdiff_t)stride)));
+		std::uint16_t* p = (std::uint16_t*)(((char*)ptr) + (y * ((ptrdiff_t)stride)));
 		for (int x = 0; x < w; ++x)
 		{
 			*(p + x * 3 + 0) = b;
@@ -304,7 +304,7 @@ using namespace std;
 {
 	for (int y = 0; y < h; ++y)
 	{
-		float* p = (float*)(((char*)ptr) + (y*((ptrdiff_t)stride)));
+		float* p = (float*)(((char*)ptr) + (y * ((ptrdiff_t)stride)));
 		for (int x = 0; x < w; ++x)
 		{
 			*(p + x) = v;
@@ -312,7 +312,7 @@ using namespace std;
 	}
 }
 
-/*static*/void CBitmapOperations::RGB48ToBGR48(int w, int h, std::uint16_t* ptr, int stride)
+/*static*/void CBitmapOperations::RGB48ToBGR48(int w, int h, std::uint16_t * ptr, int stride)
 {
 	for (int y = 0; y < h; ++y)
 	{
