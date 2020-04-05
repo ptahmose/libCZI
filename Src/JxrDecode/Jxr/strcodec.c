@@ -1136,7 +1136,7 @@ ERR readIS(CWMImageStrCodec* pSC, BitIOInfo* pIO)
 		PERFTIMER_START(pSC->m_fMeasurePerf, pSC->m_ptEncDecPerf);
 
 		// make shadow copy for first 4B
-		pIO->uiShadow = *(U32*)pIO->pbStart;
+		pIO->uiShadow = *(U32*)pIO->pbStart;	// TODO: does this need to be made endianess-aware?
 
 		// reposition pbPacket pointer
 		pIO->pbStart = MASKPTR(pIO->pbStart + PACKETLENGTH, pIO->iMask);
