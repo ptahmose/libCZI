@@ -26,8 +26,6 @@
 
 namespace libCZI
 {
-
-
 	/// This is an utility in order to prepare the information
 	/// required for the multi-channel-composition functions from
 	/// the display-settings (e. g. retrieved from metadata).

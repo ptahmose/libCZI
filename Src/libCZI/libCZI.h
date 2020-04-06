@@ -29,6 +29,7 @@
 #include "libCZI_DimCoordinate.h"
 #include "libCZI_Pixels.h"
 #include "libCZI_Metadata.h"
+#include "libCZI_Metadata2.h"
 #include "libCZI_Utilities.h"
 #include "libCZI_Compositor.h"
 #include "libCZI_Site.h"
@@ -44,7 +45,7 @@
 namespace libCZI
 {
 	/// Values that represent site-object-types.
-	/// On Windows, we provide on Site-object that uses the WIC-codec and one that uses
+	/// On Windows, we provide one Site-object that uses the WIC-codec and one that uses
 	/// an internal JPEG-XR decoder (JXRLib).
 	enum class SiteObjectType
 	{
@@ -77,11 +78,20 @@ namespace libCZI
 	class ISubBlockRepository;
 	class IAttachment;
 
+	struct BuildInformation
+	{
+		std::string	compilerIdentification;
+	};
+
 	/// Gets the version of the library.
 	///
 	/// \param [out] pMajor If non-null, will receive the major version number.
 	/// \param [out] pMinor If non-null, will receive the minor version number.
 	LIBCZI_API void GetLibCZIVersion(int* pMajor, int* pMinor);
+
+	/// Gets information about the libCZI-library - e.g. how it was built.
+	/// \param [out] info The information.
+	LIBCZI_API void GetLibCZIBuildInformation(BuildInformation& info);
 
 	/// Creates a new instance of the CZI-reader class.
 	/// \return The newly created CZI-reader.
@@ -252,6 +262,8 @@ namespace libCZI
 		/// \return The raw data.
 		virtual std::shared_ptr<const void> GetRawData(size_t* ptrSize) = 0;
 
+		virtual ~IAttachment() {};
+
 		/// A helper method used to cast the pointer to a specific type.
 		/// \param [out] ptr 	 The pointer to the data is stored here.
 		/// \param [out] size	 The size of the data.
@@ -344,7 +356,7 @@ namespace libCZI
 		/// \return True if minMindex and maxMindex are valid, false if not.
 		bool IsMIndexValid() const
 		{
-			return this->minMindex < this->maxMindex ? true : false;
+			return this->minMindex <= this->maxMindex ? true : false;
 		}
 
 		/// Invalidates this object.
@@ -401,7 +413,7 @@ namespace libCZI
 	};
 
 	/// Interface for sub-block repository. This interface is used to access the sub-blocks in a CZI-file.
-	class ISubBlockRepository
+	class LIBCZI_API ISubBlockRepository
 	{
 	public:
 		/// Enumerate all sub-blocks. 
@@ -455,7 +467,7 @@ namespace libCZI
 	};
 
 	/// Interface for the attachment repository. This interface is used to access the attachments in a CZI-file.
-	class IAttachmentRepository
+	class LIBCZI_API IAttachmentRepository
 	{
 	public:
 
@@ -476,12 +488,24 @@ namespace libCZI
 		/// 				information about the attachment.
 		virtual void EnumerateSubset(const char* contentFileType, const char* name, std::function<bool(int index, const AttachmentInfo& infi)> funcEnum) = 0;
 
+		virtual ~IAttachmentRepository() {};
+
 		/// Reads the attachment identified by the specified index. If there is no attachment present (for
 		/// the specified index) then an empty shared_ptr is returned. If a different kind of problem
 		/// occurs (e. g. I/O error or corrupted data) an exception is thrown.
 		/// \param index Index of the attachment (as reported by the Enumerate-methods).
 		/// \return If successful, the attachment object; otherwise an empty shared_ptr.
 		virtual std::shared_ptr<IAttachment> ReadAttachment(int index) = 0;
+	};
+
+	/// Global information about the CZI-file (from the CZI-fileheader-segment).
+	struct FileHeaderInfo
+	{
+		///< The file-GUID of the CZI. Note: CZI defines two GUIDs, this is the "FileGuid". Multi-file containers 
+		/// (for which the other GUID "PrimaryFileGuid" is used) are not supported by libCZI currently.
+		GUID fileGuid;		
+		int majorVersion;	///< The major version.
+		int minorVersion;	///< The minor version.
 	};
 
 	/// This interface is used to represent the CZI-file.
@@ -496,6 +520,10 @@ namespace libCZI
 		///
 		/// \param stream The stream object.
 		virtual void Open(std::shared_ptr<IStream> stream) = 0;
+
+		/// Gets the file header information.
+		/// \return The file header information.
+		virtual FileHeaderInfo GetFileHeaderInfo() = 0;
 
 		/// Reads the metadata segment from the stream.
 		/// \remark

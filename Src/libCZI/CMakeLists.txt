@@ -16,8 +16,7 @@ string(CONCAT libCZI_CompilerIdentification "\"" ${CMAKE_CXX_COMPILER_ID} " " ${
 
 configure_file (
   "${CMAKE_CURRENT_SOURCE_DIR}/libCZI_Config.h.in"
-  "${CMAKE_CURRENT_BINARY_DIR}/libCZI_Config.h"
-  )
+  "${CMAKE_CURRENT_BINARY_DIR}/libCZI_Config.h")
 
 
 if (LIBCZI_BUILD_DYNLIB)

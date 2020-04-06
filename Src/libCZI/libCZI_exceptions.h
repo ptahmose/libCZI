@@ -38,7 +38,7 @@ namespace libCZI
 		{}
 	};
 
-	/// Exception for signalling errors specific for accessors.
+	/// Exception for signaling errors specific for accessors.
 	class LibCZIAccessorException : public LibCZIException
 	{
 	public:
@@ -64,7 +64,7 @@ namespace libCZI
 		ErrorType GetErrorType() const { return this->errorType; };
 	};
 
-	/// Exception for signalling that a string did not parse correctly.
+	/// Exception for signaling that a string did not parse correctly.
 	class LibCZIStringParseException : public LibCZIException
 	{
 	public:
@@ -101,7 +101,7 @@ namespace libCZI
 	};
 
 
-	/// Exception for signalling an I/O error. If the problem originates from the
+	/// Exception for signaling an I/O error. If the problem originates from the
 	/// (external) stream-object, then the original exception is enclosed here as
 	/// a nested exception. In order to access the nested exception, use something
 	/// like this:
@@ -135,7 +135,7 @@ namespace libCZI
 		/// \param offset   The offset (into the stream) at which the I/O-error occured.
 		/// \param size	    The size of data we have attempted to read (when the I/O-error occured).
 		LibCZIIOException(const char* szErrMsg, std::uint64_t offset, std::uint64_t size)
-			: offset(offset), size(size), LibCZIException(szErrMsg) {}
+			: LibCZIException(szErrMsg), offset(offset), size(size)  {}
 
 		/// Gets the offset (in bytes) into the stream at which
 		/// the I/O-error occured.
@@ -147,11 +147,11 @@ namespace libCZI
 		/// when the I/O-error occured.
 		///
 		/// \return The size (in bytes).
-		std::uint64_t GetSize() const {return this->size; }
+		std::uint64_t GetSize() const { return this->size; }
 	};
 
 
-	/// Exception for signalling errors parsing the CZI-stream.
+	/// Exception for signaling errors parsing the CZI-stream.
 	struct LibCZICZIParseException : public LibCZIException
 	{
 		/// Values that represent different error conditions.
@@ -178,7 +178,7 @@ namespace libCZI
 		ErrorCode errorCode;
 	};
 
-	/// Exception for signalling an incorrect plane-coordinate object.
+	/// Exception for signaling an incorrect plane-coordinate object.
 	struct LibCZIInvalidPlaneCoordinateException : public LibCZIException
 	{
 		/// Values that represent different error conditions.
@@ -200,6 +200,46 @@ namespace libCZI
 		}
 	private:
 		ErrorCode errorCode;
+	};
+
+        /// Exception for signaling errors when accessing the XML-metadata (.
+	class LibCZIMetadataException : public LibCZIException
+	{
+	public:
+		/// Values that represent different error conditions.
+		enum class ErrorType
+		{
+			InvalidPath,			///< the path specified in a call to IXmlNodeRead::GetChildNodeReadonly was invalid
+		};
+
+		/// Constructor for the LibCZIMetadataBuilderException. This type is used
+		/// to signal errors when using the Czi-metadata-builder-object.
+		/// \param szErrMsg Message describing the error.
+		/// \param code	    The error code.
+		LibCZIMetadataException(const char* szErrMsg, ErrorType code)
+			: LibCZIException(szErrMsg), errorType(code)
+		{
+		}
+
+		/// Gets error code.
+		/// \return The error code.
+		ErrorType GetErrorType() const { return this->errorType; }
+
+	private:
+		ErrorType errorType;
+	};
+
+	/// Exception for signaling errors when parsing the XML-metadata.
+	class LibCZIXmlParseException : public LibCZIException
+	{
+	public:
+		/// Constructor for the LibCZIXmlParseException. This type is used
+		/// signaling errors when parsing the XML-metadata.
+		/// \param szErrMsg Message describing the error.
+		LibCZIXmlParseException(const char* szErrMsg)
+			: LibCZIException(szErrMsg)
+		{
+		}
 	};
 }
 

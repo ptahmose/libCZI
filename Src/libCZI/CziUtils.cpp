@@ -45,6 +45,26 @@ using namespace libCZI;
 	return PixelType::Invalid;
 }
 
+/*static*/int CziUtils::IntFromPixelType(libCZI::PixelType p)
+{
+	switch (p)
+	{
+	case PixelType::Gray8:				return 0;;
+	case PixelType::Gray16:				return 1;
+	case PixelType::Gray32Float:		return 2;
+	case PixelType::Bgr24:				return 3;
+	case PixelType::Bgr48:				return 4;
+	case PixelType::Bgr96Float:			return 8;
+	case PixelType::Bgra32:				return 9;
+	case PixelType::Gray64ComplexFloat:	return 10;
+	case PixelType::Bgr192ComplexFloat:	return 11;
+	case PixelType::Gray32:				return 12;
+	case PixelType::Gray64Float:		return 13;
+	default:							return (std::numeric_limits<int>::min)();
+	}
+}
+
+
 /*static*/libCZI::CompressionMode CziUtils::CompressionModeFromInt(int i)
 {
 	switch (i)
@@ -52,9 +72,8 @@ using namespace libCZI;
 	case 0: return CompressionMode::UnCompressed;
 	case 1: return CompressionMode::Jpg;
 	case 4: return CompressionMode::JpgXr;
+	default: return CompressionMode::Invalid;
 	}
-
-	return CompressionMode::Invalid;
 }
 
 /*static*/std::uint8_t CziUtils::GetBytesPerPel(libCZI::PixelType pixelType)
@@ -62,17 +81,17 @@ using namespace libCZI;
 	switch (pixelType)
 	{
 	case PixelType::Gray8: return 1;
-	case PixelType::Gray16:return 2;
-	case PixelType::Gray32Float:return 4;
-	case PixelType::Bgr24:return 3;
+	case PixelType::Gray16:				return 2;
+	case PixelType::Gray32Float:		return 4;
+	case PixelType::Bgr24:				return 3;
 	case PixelType::Bgr48: return 6;
 	case PixelType::Bgr96Float: return 12;
-	case PixelType::Bgra32:return 4;
+	case PixelType::Bgra32:				return 4;
 	case PixelType::Gray64ComplexFloat: return 16;
 	case PixelType::Bgr192ComplexFloat: return 48;
 	case PixelType::Gray32: return 4;
-	case PixelType::Gray64Float:return 8;
-	default:throw std::invalid_argument("illegal pixeltype");
+	case PixelType::Gray64Float:		return 8;
+	default: throw std::invalid_argument("illegal pixeltype");
 	}
 }
 
@@ -97,7 +116,7 @@ using namespace libCZI;
 		{
 			if (coord2->TryGetPosition(dim, &coordinate2) != true)
 			{
-				areEqual= false;
+				areEqual = false;
 				return false;
 			}
 
@@ -143,4 +162,17 @@ using namespace libCZI;
 	}
 
 	return minFactor;
+}
+
+/*static*/bool CziUtils::IsPixelTypeEndianessAgnostic(libCZI::PixelType pixelType)
+{
+	switch (pixelType)
+	{
+	case PixelType::Gray8:
+	case PixelType::Bgr24:
+	case PixelType::Bgra32: 
+		return true;
+	}
+
+	return false;
 }

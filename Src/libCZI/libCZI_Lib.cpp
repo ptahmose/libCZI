@@ -28,6 +28,7 @@
 #include "SingleChannelPyramidLevelTileAccessor.h"
 #include "SingleChannelScalingTileAccessor.h"
 #include "StreamImpl.h"
+#include "inc_libCZI_Config.h"
 
 using namespace libCZI;
 using namespace std;
@@ -36,13 +37,18 @@ void libCZI::GetLibCZIVersion(int* pMajor, int* pMinor)
 {
 	if (pMajor != nullptr)
 	{
-		*pMajor = 0;
+		*pMajor = LIBCZI_VERSION_MAJOR;
 	}
 
 	if (pMinor != nullptr)
 	{
-		*pMinor = 24;
+		*pMinor = LIBCZI_VERSION_MINOR;
 	}
+}
+
+void libCZI::GetLibCZIBuildInformation(BuildInformation& info)
+{
+	info.compilerIdentification = LIBCZI_CXX_COMPILER_IDENTIFICATION;
 }
 
 std::shared_ptr<ICZIReader> libCZI::CreateCZIReader()
@@ -70,7 +76,7 @@ std::shared_ptr<IAccessor> libCZI::CreateAccesor(std::shared_ptr<ISubBlockReposi
 	throw std::invalid_argument("unknown accessorType");
 }
 
-std::shared_ptr<IStream> libCZI::CreateStreamFromFile(const wchar_t* szFilename)
+std::shared_ptr<libCZI::IStream> libCZI::CreateStreamFromFile(const wchar_t* szFilename)
 {
 #ifdef _WIN32
 	return make_shared<CSimpleStreamImplWindows>(szFilename);
@@ -79,12 +85,12 @@ std::shared_ptr<IStream> libCZI::CreateStreamFromFile(const wchar_t* szFilename)
 #endif
 }
 
-std::shared_ptr<IStream> libCZI::CreateStreamFromMemory(std::shared_ptr<const void> ptr, size_t dataSize)
+std::shared_ptr<libCZI::IStream> libCZI::CreateStreamFromMemory(std::shared_ptr<const void> ptr, size_t dataSize)
 {
 	return make_shared<CStreamImplInMemory>(ptr, dataSize);
 }
 
-std::shared_ptr<IStream> libCZI::CreateStreamFromMemory(libCZI::IAttachment* attachment)
+std::shared_ptr<libCZI::IStream> libCZI::CreateStreamFromMemory(libCZI::IAttachment* attachment)
 {
 	return make_shared<CStreamImplInMemory>(attachment);
 }

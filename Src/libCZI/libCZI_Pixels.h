@@ -48,7 +48,7 @@ namespace libCZI
 		/// \return True if the two rectangles intersect, false otherwise.
 		bool IntersectsWith(const IntRect& r) const
 		{
-			IntRect is = this->Intersect(r);
+			const IntRect is = this->Intersect(r);
 			if (is.w <= 0 || is.h <= 0)
 			{
 				return false;

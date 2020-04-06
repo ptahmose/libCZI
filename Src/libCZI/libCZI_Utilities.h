@@ -22,15 +22,18 @@
 
 #pragma once
 
+#include "libCZI_Metadata.h"
+
 namespace libCZI
 {
 	class ISubBlockRepository;
+	class IDisplaySettings;
 
 	/// A bunch of utility functions.
 	class LIBCZI_API Utils
 	{
 	public:
-		/// Convert the specifed dimension enum to the corresponding "single char representation'. The returned
+		/// Convert the specifed dimension enum to the corresponding "single char representation". The returned
 		/// character will be uppercase. If the specified dimension enum cannot be converted, '?' is returned.
 		///
 		/// \param dim The dimension enum.
@@ -42,7 +45,7 @@ namespace libCZI
 		/// may be given uppercase or lowercase. In case that no corresponding dimension enum exists,
 		/// `DimensionIndex::invalid` is returned.
 		///
-		/// \param c The "single char representation' of a dimension.
+		/// \param c The "single char representation" of a dimension.
 		///
 		/// \return A enum value representing the specified dimension if it exists, `DimensionIndex::invalid` otherwise.
 		static libCZI::DimensionIndex CharToDimension(char c);
@@ -123,6 +126,24 @@ namespace libCZI
 			}
 		}
 
+		//// Calculate a zoom-factor from the physical- and logical size.
+		/// \remark
+		/// This calculation not really well-defined.
+		/// \param logicalSize  The logical size.
+		/// \param physicalSize The physical size.
+		/// \return The calculated zoom.
+		static float CalcZoom(const libCZI::IntSize& logicalSize, const libCZI::IntSize& physicalSize)
+		{
+			if (physicalSize.w > physicalSize.h)
+			{
+				return float(physicalSize.w) / logicalSize.w;
+			}
+			else
+			{
+				return float(physicalSize.h) / logicalSize.h;
+			}
+		}
+
 		/// Retrieves an informal string representing the specified pixeltype. 
 		///
 		/// \param pxltp The pixel-type.
@@ -142,6 +163,17 @@ namespace libCZI
 		/// \return A string representation of the specified coordinate.
 		static std::string DimCoordinateToString(const libCZI::IDimCoordinate* coord);
 
+		/// Convert the specified string into a dimension-coordinate instance.
+		/// \param 		    sz    The string to convert.
+		/// \param [out]	coord If non-null and if the parsing was successful, the information will be put here.
+		/// \returns True if the string parsed successfully, false otherwise.
+		static bool StringToDimCoordinate(const char* sz, libCZI::CDimCoordinate* coord);
+
+		/// Get a string representation of the specified bounds.
+		/// \param bounds The bounds.
+		/// \return A string representation of the specified bounds.
+		static std::string DimBoundsToString(const libCZI::IDimBounds* bounds);
+
 		/// Create an index-set object from a string representation. The string is a list of intervals,
 		/// seperated by comma (','). It can be of the form "5", "17", "3-5", "-3-5". The string
 		/// "inf" (meaning 'infinity') is recognized in order to express "all numbers up to" or "all numbers after"
@@ -160,5 +192,35 @@ namespace libCZI
 		/// \return The pixeltype if it can be determined. If it cannot be determined reliably (e.g. there is no subblock with
 		/// 		the specified channel-index), then PixelType::Invalid is returned.
 		static libCZI::PixelType TryDeterminePixelTypeForChannel(libCZI::ISubBlockRepository* repository, int channelIdx);
+
+		/// Compares two coordinate-objects to determine their relative ordering.
+		/// The algorithm employed is: we check for all coordinates which are marked valid in a or b (in the order of the numerical value or the enum)...
+		/// 1. coordinateA(dim) is valid and coordinateB(dim) is invalid -> a > b  
+		/// 2. coordinateA(dim) is invalid and coordinateB(dim) is valid -> a < b  
+		/// 3. if both are valid, then the coordinate-values are determined and compared
+		///
+		/// \param a First coordinate to be compared.
+		/// \param b Second coordinate to be compared.
+		///
+		/// \return Negative if 'a' is less than 'b', 0 if they are equal, or positive if it is greater.
+		static int Compare(const IDimCoordinate* a, const IDimCoordinate* b);
+
+		/// Test whether the two specified coordinates have the same set of valid dimensions.
+		///
+		/// \param a The first coordinate-object to compare.
+		/// \param b The second coordinate-object to compare.
+		///
+		/// \return True if the two coordinates have the same set of valid dimensions, false otherwise.
+		static bool HasSameDimensions(const IDimCoordinate* a, const IDimCoordinate* b);
+
+		/// Enumerate all coordinates "contained" in the specified bounds. The specified function is called with all valid coordinates
+		/// (which lie inside the bounds). The first argument to the function is a counter which increments for each generated coordinate
+		/// (and starts with 0). If the function returns false, the enumeration is ended, and this function returns immediately with false.
+		///
+		/// \param bounds The bounds.
+		/// \param func   The function to be called with the generated coordinates.
+		///
+		/// \return True if the enumeration completed, false if it was cancelled (by returning false from the callback).
+		static bool EnumAllCoordinates(const libCZI::CDimBounds& bounds, const std::function<bool(std::uint64_t, const libCZI::CDimCoordinate& coord)>& func);
 	};
 }

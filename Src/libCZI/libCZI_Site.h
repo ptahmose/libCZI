@@ -53,6 +53,8 @@ namespace libCZI
 		///
 		/// \return A bitmap object witht the decoded data.
 		virtual std::shared_ptr<libCZI::IBitmapData> Decode(const void* ptrData, size_t size) = 0;
+
+		virtual ~IDecoder() = default;
 	};
 
 	const int LOGLEVEL_CATASTROPHICERROR = 0;	///< Identifies a catastrophic error (i. e. the program cannot continue).
@@ -123,7 +125,5 @@ namespace libCZI
 		{
 			this->Log(level, ss.str());
 		}
-
-
 	};
 }

@@ -38,6 +38,7 @@ class CziUtils
 {
 public:
 	static libCZI::PixelType PixelTypeFromInt(int i);
+	static int IntFromPixelType(libCZI::PixelType);
 	static libCZI::CompressionMode CompressionModeFromInt(int i);
 	static std::uint8_t GetBytesPerPel(libCZI::PixelType pixelType);
 	static bool CompareCoordinate(const libCZI::IDimCoordinate* coord1, const libCZI::IDimCoordinate* coord2);
@@ -45,6 +46,7 @@ public:
 
 	static double CalculateMinificationFactor(int logicalSizeWidth, int logicalSizeHeight, int physicalSizeWidth, int physicalSizeHeight);
 
+	static bool IsPixelTypeEndianessAgnostic(libCZI::PixelType);
 
 	template <libCZI::PixelType tPixelType>
 	static constexpr std::uint8_t BytesPerPel();// { /*throw std::logic_error("invalid pixeltype");*/return 0; }

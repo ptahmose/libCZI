@@ -40,6 +40,9 @@ public:	// interface ICziMultiDimensionDocumentInfo
 	virtual libCZI::ScalingInfo GetScalingInfo() const override;
 	virtual void EnumDimensions(std::function<bool(libCZI::DimensionIndex)> enumDimensions) override;
 	virtual std::shared_ptr<libCZI::IDimensionInfo> GetDimensionInfo(libCZI::DimensionIndex dim) override;
+	virtual std::shared_ptr<libCZI::IDimensionZInfo> GetDimensionZInfo() override;
+	virtual std::shared_ptr<libCZI::IDimensionTInfo> GetDimensionTInfo() override;
+	virtual std::shared_ptr<libCZI::IDimensionsChannelsInfo> GetDimensionChannelsInfo() override;
 	virtual std::shared_ptr<libCZI::IDisplaySettings> GetDisplaySettings() const override;
 
 private:

@@ -384,23 +384,45 @@ std::vector<std::uint8_t> InternalCreate8BitLookUpTableFromGamma(int tableElemen
 	return ss.str();
 }
 
+/*static*/bool Utils::StringToDimCoordinate(const char* sz, libCZI::CDimCoordinate* coord)
+{
+	try
+	{
+		if (coord != nullptr)
+		{
+			*coord = CDimCoordinate::Parse(sz);
+		}
+		else
+		{
+			CDimCoordinate::Parse(sz);
+		}
+
+		return true;
+	}
+	catch (LibCZIStringParseException& /*excp*/)
+	{
+		return false;
+	}
+}
+
+/*static*/std::string Utils::DimBoundsToString(const libCZI::IDimBounds* bounds)
+{
+	stringstream ss;
+	for (int i = (int)(libCZI::DimensionIndex::MinDim); i <= (int)(libCZI::DimensionIndex::MaxDim); ++i)
+	{
+		int start, size;
+		if (bounds->TryGetInterval((libCZI::DimensionIndex)i, &start, &size))
+	{
+			ss << DimensionToChar((libCZI::DimensionIndex)i) << start << ':' << size;
+		}
+		}
+
+	return ss.str();
+}
+
 /*static*/std::shared_ptr<libCZI::IIndexSet> Utils::IndexSetFromString(const std::wstring& s)
 {
 	return std::make_shared<CIndexSet>(s);
-	/*std::vector<wstring> parts;
-	Utilities::Split(s, L',', [&](const std::wstring str)->bool {parts.push_back(str); });*/
-
-	/*const std::wregex expression(L"([+-]*\s*(?:\d+|inf))\s*-\s*([+-]*\s*(?:\d+|inf))");*/
-
-	class CIndexTest :public IIndexSet
-	{
-	public:
-		bool IsContained(int index) const {
-			return index == 2 || index == 3 ? true : false;
-		}
-	};
-
-	return std::make_shared<CIndexTest>();
 }
 
 /*static*/libCZI::PixelType  Utils::TryDeterminePixelTypeForChannel(libCZI::ISubBlockRepository* repository, int channelIdx)
@@ -414,3 +436,115 @@ std::vector<std::uint8_t> InternalCreate8BitLookUpTableFromGamma(int tableElemen
 
 	return info.pixelType;
 }
+
+/*static*/int Utils::Compare(const IDimCoordinate* a, const IDimCoordinate* b)
+{
+	// algorithm:
+	// We check all dimensions (in the ordinal order of the enums), then if 
+	// coordinateA(dim) is valid and coordinateB(dim) is invalid -> a > b
+	// coordinateA(dim) is invalid and coordinateB(dim) is valid -> a < b
+	// if both are valid, then the coordinate-values are determined and compared
+	for (auto i = static_cast<std::underlying_type<libCZI::DimensionIndex>::type>(libCZI::DimensionIndex::MinDim); i <= static_cast<std::underlying_type<libCZI::DimensionIndex>::type>(libCZI::DimensionIndex::MaxDim); ++i)
+	{
+		int coord1, coord2;
+		bool valida = a->TryGetPosition((DimensionIndex)i, &coord1);
+		bool validb = b->TryGetPosition((DimensionIndex)i, &coord2);
+		if (valida == true && validb == true)
+		{
+			if (coord1 > coord2)
+			{
+				return 1;
+			}
+			else if (coord1 < coord2)
+			{
+				return -1;
+			}
+		}
+		else if (valida == true && validb == false)
+		{
+			return 1;
+		}
+		else if (valida == false && validb == true)
+		{
+			return -1;
+		}
+	}
+
+	return 0;
+}
+
+/*static*/bool Utils::HasSameDimensions(const IDimCoordinate* a, const IDimCoordinate* b)
+{
+	for (auto i = static_cast<std::underlying_type<libCZI::DimensionIndex>::type>(libCZI::DimensionIndex::MinDim); i <= static_cast<std::underlying_type<libCZI::DimensionIndex>::type>(libCZI::DimensionIndex::MaxDim); ++i)
+	{
+		bool valida = a->IsValid((DimensionIndex)i);
+		bool validb = b->IsValid((DimensionIndex)i);
+		if ((valida == true && validb != true) || (valida != true && validb == true))
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	return true;
+}
+
+/*static*/bool Utils::EnumAllCoordinates(const libCZI::CDimBounds& bounds, const std::function<bool(std::uint64_t, const libCZI::CDimCoordinate& coord)>& func)
+{
+	if (bounds.IsEmpty())
+	{
+		return true;
+	}
+
+	CDimCoordinate coord;
+	std::vector<DimensionIndex> dims;
+	bounds.EnumValidDimensions(
+		[&](libCZI::DimensionIndex dim, int start, int size)->bool
+	{
+		coord.Set(dim, start);
+		dims.push_back(dim);
+		return true;
+	});
+
+	uint64_t coordNo = 0;
+	for (;;)
+	{
+		if (!func(coordNo++, coord))
+		{
+			return false;
+		}
+
+		for (size_t i = 0; i < dims.size(); ++i)
+		{
+			int v;
+			coord.TryGetPosition(dims[i], &v);
+
+			int minVal, sizeVal;
+			bounds.TryGetInterval(dims[i], &minVal, &sizeVal);
+
+			if (v < minVal + sizeVal - 1)
+			{
+				++v;
+				coord.Set(dims[i], v);
+				break;
+			}
+			else
+			{
+				if (i == dims.size() - 1)
+				{
+					return true;
+				}
+
+				for (size_t j = 0; j <= i; j++)
+				{
+					bounds.TryGetInterval(dims[j], &minVal, nullptr);
+					coord.Set(dims[j], minVal);
+				}
+			}
+		}
+	}
+}
+
+// ----------------------------------------------------------------------------
+

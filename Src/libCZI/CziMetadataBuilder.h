@@ -19,43 +19,9 @@
 // To obtain a commercial version please contact Zeiss Microscopy GmbH.
 // 
 //******************************************************************************
-
 #pragma once
-#include <functional>
-#include <set>
-#include <map>
 
-class CCziAttachmentsDirectoryBase
-{
-public:
-	struct AttachmentEntry
-	{
-		std::int64_t FilePosition;
-		GUID ContentGuid;
-		char ContentFileType[8];
-		char Name[80];
-	};
-
-	struct AttachmentEntryEx : AttachmentEntry
-	{
-		std::int64_t allocatedSize;
-	};
-
-	static bool CompareForEquality_Id(const AttachmentEntry&a, const AttachmentEntry&b);
-};
-
-class CCziAttachmentsDirectory :public CCziAttachmentsDirectoryBase
-{
-private:
-	std::vector<AttachmentEntry> attachmentEntries;
-public:
-	CCziAttachmentsDirectory() = default;
-	explicit CCziAttachmentsDirectory(size_t initialCnt)
-	{
-		this->attachmentEntries.reserve(initialCnt);
-	}
-
-	void AddAttachmentEntry(const AttachmentEntry& entry);
-	void EnumAttachments(std::function<bool(int index, const CCziAttachmentsDirectory::AttachmentEntry&)> func);
-	bool TryGetAttachment(int index, AttachmentEntry& entry);
-};
+#include <utility>
+#include "libCZI.h"
+#include "CziSubBlockDirectory.h"
+#include "pugixml.hpp"
