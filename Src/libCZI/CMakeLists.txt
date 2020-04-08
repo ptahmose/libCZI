@@ -28,7 +28,8 @@ if (LIBCZI_BUILD_DYNLIB)
 endif(LIBCZI_BUILD_DYNLIB)
 
 if (LIBCZI_BUILD_STATICLIB)
-	add_library(libCZIStatic STATIC ${LIBCZISRCFILES} ${LIBCZISRCEIGENFILES})
+  # Notes: -we use JxrDecode as an "object-library" in order have it "embedded" into libCZI.a
+	add_library(libCZIStatic STATIC ${LIBCZISRCFILES} ${LIBCZISRCEIGENFILES} $<TARGET_OBJECTS:JxrDecodeStatic>)
 	target_compile_definitions(libCZIStatic PRIVATE _STATICLIBBUILD=1)
 	target_include_directories(libCZIStatic PRIVATE  ${CMAKE_CURRENT_BINARY_DIR})
 		MESSAGE(${CMAKE_CURRENT_BINARY_DIR})
