@@ -40,7 +40,7 @@ if (NOT HAVE_ALIGNED_ALLOC)
   check_cxx_symbol_exists(_aligned_malloc stdlib.h HAVE__ALIGNED_MALLOC)
 endif()
 
-option(LIBCZI_IGNORE_INSTALLED_EIGEN3 "Ignore an existing Eigen3-package (and also download external project)" OFF)
+option(LIBCZI_IGNORE_INSTALLED_EIGEN3 "Ignore an existing Eigen3-package (and always download external project)" OFF)
 
 if (NOT LIBCZI_IGNORE_INSTALLED_EIGEN3)
  find_package(Eigen3 NO_MODULE)
