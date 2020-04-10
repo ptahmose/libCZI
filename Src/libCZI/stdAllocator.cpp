@@ -23,6 +23,7 @@
 #include "stdafx.h"
 #include "stdAllocator.h"
 #include <limits>
+#include <stdlib.h>
 
 void* CHeapAllocator::Allocate(std::uint64_t size)
 {

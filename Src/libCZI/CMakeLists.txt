@@ -21,6 +21,7 @@ configure_file (
 
 if (LIBCZI_BUILD_DYNLIB)
 	add_library(libCZI SHARED ${LIBCZISRCFILES} ${LIBCZISRCEIGENFILES}  $<TARGET_OBJECTS:JxrDecodeStatic>)
+	set_target_properties(libCZI PROPERTIES CXX_STANDARD 11 CXX_STANDARD_REQUIRED YES)
 	SET_TARGET_PROPERTIES (libCZI PROPERTIES DEFINE_SYMBOL  "LIBCZI_EXPORTS" )
 	#target_link_libraries(libCZI PRIVATE JxrDecodeStatic)
 	target_include_directories(libCZI PRIVATE  ${CMAKE_CURRENT_BINARY_DIR}) # this is necessary so that we can find "libCZI_Config.h" which we created above
@@ -30,6 +31,7 @@ endif(LIBCZI_BUILD_DYNLIB)
 if (LIBCZI_BUILD_STATICLIB)
   # Notes: -we use JxrDecode as an "object-library" in order have it "embedded" into libCZI.a
 	add_library(libCZIStatic STATIC ${LIBCZISRCFILES} ${LIBCZISRCEIGENFILES} $<TARGET_OBJECTS:JxrDecodeStatic>)
+	set_target_properties(libCZIStatic PROPERTIES CXX_STANDARD 11 CXX_STANDARD_REQUIRED YES)
 	target_compile_definitions(libCZIStatic PRIVATE _STATICLIBBUILD=1)
 	target_include_directories(libCZIStatic PRIVATE  ${CMAKE_CURRENT_BINARY_DIR})
 	set_target_properties(libCZIStatic PROPERTIES DEBUG_POSTFIX "d") # this is necessary so that we can find "libCZI_Config.h" which we created above
