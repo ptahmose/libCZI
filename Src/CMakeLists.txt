@@ -48,11 +48,13 @@ if (NOT LIBCZI_IGNORE_INSTALLED_EIGEN3)
    message(STATUS "using existing Eigen3-package -> ${EIGEN3_INCLUDE_DIR}")
  else()
    unset(EIGEN3_INCLUDE_DIR)
+   unset(EXTERNALPROJECT_EIGEN3)
  endif()
 endif()
 
 if (NOT EIGEN3_INCLUDE_DIR)
  include(ExternalEIGEN3)
+ set(EXTERNALPROJECT_EIGEN3 1)
  message("using downloaded Eigen3 -> ${EIGEN3_INCLUDE_DIR}")
 endif()
 
