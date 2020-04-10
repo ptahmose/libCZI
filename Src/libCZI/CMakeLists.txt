@@ -45,6 +45,9 @@ if (LIBCZI_BUILD_DYNLIB)
 	target_include_directories(libCZI PRIVATE  ${EIGEN3_INCLUDE_DIRS})
 	set_target_properties(libCZI PROPERTIES DEBUG_POSTFIX "d")
   set_target_properties(libCZI PROPERTIES PUBLIC_HEADER "${libCZIPublicHeaders}")
+	IF(UNIX)
+		target_compile_options(libCZI PRIVATE -D_FILE_OFFSET_BITS=64)
+  ENDIF(UNIX)
 endif(LIBCZI_BUILD_DYNLIB)
 
 if (LIBCZI_BUILD_STATICLIB)
@@ -56,13 +59,10 @@ if (LIBCZI_BUILD_STATICLIB)
 	target_include_directories(libCZIStatic PRIVATE  ${EIGEN3_INCLUDE_DIRS})
 	set_target_properties(libCZIStatic PROPERTIES DEBUG_POSTFIX "d")
   set_target_properties(libCZIStatic PROPERTIES PUBLIC_HEADER "${libCZIPublicHeaders}")
+	IF(UNIX)
+		target_compile_options(libCZIStatic  PRIVATE -D_FILE_OFFSET_BITS=64)
+  ENDIF(UNIX)
 endif(LIBCZI_BUILD_STATICLIB)
-
-IF(UNIX)
-  target_compile_options(libCZI PRIVATE -D_FILE_OFFSET_BITS=64)
-  target_compile_options(libCZIStatic PRIVATE -D_FILE_OFFSET_BITS=64)
-ENDIF(UNIX)
-
 
 #
 # Notes: - the variables CMAKE_INSTALL_<...> have been defined in the module "GNUInstallDirs"
