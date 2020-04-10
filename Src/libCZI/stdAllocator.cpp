@@ -46,6 +46,11 @@ void* CHeapAllocator::Allocate(std::uint64_t size)
     void** p2;
     int offset = 32 - 1 + sizeof(void*);
     p1 = malloc(size + offset);
+    if (p1 == nullptr)
+    {
+        return nullptr;
+    }
+
     p2 = (void**)(((size_t)(p1)+offset) & ~(32 - 1));
     p2[-1] = p1;
     return p2;
@@ -65,7 +70,7 @@ void CHeapAllocator::Free(void* ptr)
   #if LIBCZI_HAVE__ALIGNED_MALLOC
 	_aligned_free(ptr);
   #else
-    void* p1 = ((void**)p)[-1];         // get the pointer to the buffer we allocated
+    void* p1 = ((void**)ptr)[-1];         // get the pointer to the buffer we allocated
     free(p1);
   #endif
  #endif
