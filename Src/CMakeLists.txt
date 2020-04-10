@@ -46,6 +46,8 @@ if (NOT LIBCZI_IGNORE_INSTALLED_EIGEN3)
  find_package(Eigen3 NO_MODULE)
  if (TARGET Eigen3::Eigen)
    message(STATUS "using existing Eigen3-package -> ${EIGEN3_INCLUDE_DIR}")
+ else()
+   unset(EIGEN3_INCLUDE_DIR)
  endif()
 endif()
 
