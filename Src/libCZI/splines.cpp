@@ -23,7 +23,7 @@
 #include "stdafx.h"
 #include "splines.h"
 #include <cmath>
-#include "./eigen/Eigen"
+#include <Eigen/Eigen>
 
 using namespace std;
 using namespace Eigen;

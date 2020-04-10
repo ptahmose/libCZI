@@ -35,6 +35,9 @@ if (NOT HAVE_ALIGNED_ALLOC)
   check_cxx_symbol_exists(_aligned_malloc stdlib.h HAVE__ALIGNED_MALLOC)
 endif()
 
+include(ExternalEIGEN3)
+message("EIGEN3 -> ${EIGEN3_INCLUDE_DIRS}")
+
 option(LIBCZI_BUILD_DYNLIB "Build dynamic library 'libCZI'." ON)
 option(LIBCZI_BUILD_STATICLIB "Build static library 'libCZI'." ON)
 
