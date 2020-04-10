@@ -8,8 +8,8 @@ IF(UNIX)
 ENDIF(UNIX)
 
 IF(CMAKE_COMPILER_IS_GNUCXX)
-  LIST(APPEND CMAKE_CXX_FLAGS "-Wno-psabi") # get rid of the spurious "note: parameter passing for argument of type xxx changed in GCC 7.1"
-  #SET(CMAKE_CXX_FLAGS "-Wno-psabi")
+  #LIST(APPEND CMAKE_CXX_FLAGS "-Wno-psabi") # get rid of the spurious "note: parameter passing for argument of type xxx changed in GCC 7.1"
+  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-psabi")
 ENDIF(CMAKE_COMPILER_IS_GNUCXX)
 
 include(GNUInstallDirs)
