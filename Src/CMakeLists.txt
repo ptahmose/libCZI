@@ -31,6 +31,9 @@ message("check for endian.h -> ${HAVE_ENDIAN_H}")
 
 include (CheckCXXSymbolExists)
 check_cxx_symbol_exists(aligned_alloc stdlib.h HAVE_ALIGNED_ALLOC)
+if (NOT HAVE_ALIGNED_ALLOC)
+  check_cxx_symbol_exists(_aligned_malloc stdlib.h HAVE__ALIGNED_MALLOC)
+endif()
 
 option(LIBCZI_BUILD_DYNLIB "Build dynamic library 'libCZI'." ON)
 option(LIBCZI_BUILD_STATICLIB "Build static library 'libCZI'." ON)

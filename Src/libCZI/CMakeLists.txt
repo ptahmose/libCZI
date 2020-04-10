@@ -10,6 +10,17 @@ else()
  set(libCZI_ISBIGENDIANHOST 0)
 endif()
 
+if (HAVE_ALIGNED_ALLOC)
+ set(libCZI_HAVE_ALIGNED_ALLOC 1)
+else()
+ set(libCZI_HAVE_ALIGNED_ALLOC 0)
+endif()
+if (HAVE__ALIGNED_MALLOC)
+ set(libCZI_HAVE__ALIGNED_MALLOC 1)
+else()
+ set(libCZI_HAVE__ALIGNED_MALLOC 0)
+endif()
+
 set(libCZI_HAVE_ENDIAN_H ${HAVE_ENDIAN_H}) 
 
 string(CONCAT libCZI_CompilerIdentification "\"" ${CMAKE_CXX_COMPILER_ID} " " ${CMAKE_CXX_COMPILER_VERSION} "\"")

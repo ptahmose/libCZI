@@ -24,6 +24,7 @@
 #include "stdAllocator.h"
 #include <limits>
 #include <stdlib.h>
+#include "libCZI_Config.h"
 
 void* CHeapAllocator::Allocate(std::uint64_t size)
 {
@@ -31,24 +32,43 @@ void* CHeapAllocator::Allocate(std::uint64_t size)
 	{
 		throw std::out_of_range("The requested size for allocation is out-of-range.");
 	}
-#if defined(__EMSCRIPTEN__)||defined(__APPLE__)
+#if defined(__EMSCRIPTEN__)
 	return malloc((size_t)size);
 #else
-#if defined(__GNUC__)
+
+ #if LIBCZI_HAVE_ALIGNED_ALLOC
 	return aligned_alloc(32, size);
-#else
-	void* pv = _aligned_malloc((size_t)size, 32);
-	return pv;
-#endif
+ #else 
+  #if LIBCZI_HAVE__ALIGNED_MALLOC
+	return _aligned_malloc((size_t)size, 32);
+  #else
+    void* p1;
+    void** p2;
+    int offset = 32 - 1 + sizeof(void*);
+    p1 = malloc(size + offset);
+    p2 = (void**)(((size_t)(p1)+offset) & ~(32 - 1));
+    p2[-1] = p1;
+    return p2;
+  #endif
+ #endif
 #endif
 }
 
 void CHeapAllocator::Free(void* ptr)
 {
-#if defined(__GNUC__)||defined(__EMSCRIPTEN__)
+#if defined(__EMSCRIPTEN__) 
 	free(ptr);
 #else
+ #if LIBCZI_HAVE_ALIGNED_ALLOC // aligned_alloc goes together with 'free'
+    free(ptr);
+ #else
+  #if LIBCZI_HAVE__ALIGNED_MALLOC
 	_aligned_free(ptr);
+  #else
+    void* p1 = ((void**)p)[-1];         // get the pointer to the buffer we allocated
+    free(p1);
+  #endif
+ #endif
 #endif
 }
 

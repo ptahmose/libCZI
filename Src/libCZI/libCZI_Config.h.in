@@ -11,4 +11,8 @@
 
 #define LIBCZI_CXX_COMPILER_IDENTIFICATION @libCZI_CompilerIdentification@
 
+// whether the function "aligned_alloc" is available
+#define LIBCZI_HAVE_ALIGNED_ALLOC @libCZI_HAVE_ALIGNED_ALLOC@
 
+// whether the function "_aligned_malloc" is available
+#define LIBCZI_HAVE__ALIGNED_MALLOC @libCZI_HAVE__ALIGNED_MALLOC@
