@@ -22,7 +22,7 @@
 
 #pragma once
 
-#define _STATICLIBBUILD
+#define _LIBCZISTATICLIB
 
 #include "../libCZI/libCZI.h"
 
