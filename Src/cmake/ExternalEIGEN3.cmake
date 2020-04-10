@@ -7,9 +7,9 @@ ExternalProject_Add(
   UPDATE_COMMAND ""
   BUILD_COMMAND ""
   INSTALL_COMMAND ""
-  #LOG_DOWNLOAD ON
-  #LOG_CONFIGURE ON
-  )
+  LOG_DOWNLOAD ON   # redirect output to log-file (so that we have less clutter)
+  LOG_CONFIGURE ON  # redirect output to log-file (so that we have less clutter)
+)
 
 ExternalProject_Get_Property(eigen_ext source_dir)
 set(EIGEN3_INCLUDE_DIRS ${source_dir})

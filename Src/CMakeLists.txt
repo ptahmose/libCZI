@@ -40,8 +40,19 @@ if (NOT HAVE_ALIGNED_ALLOC)
   check_cxx_symbol_exists(_aligned_malloc stdlib.h HAVE__ALIGNED_MALLOC)
 endif()
 
-include(ExternalEIGEN3)
-message("EIGEN3 -> ${EIGEN3_INCLUDE_DIRS}")
+option(LIBCZI_IGNORE_INSTALLED_EIGEN3 "Ignore an existing Eigen3-package (and also download external project)" OFF)
+
+if (NOT LIBCZI_IGNORE_INSTALLED_EIGEN3)
+ find_package(Eigen3 NO_MODULE)
+ if (TARGET Eigen3::Eigen)
+   set(EIGEN3_INCLUDE_DIRS ${EIGEN3_INCLUDE_DIR})
+ endif()
+endif()
+
+if (NOT EIGEN3_INCLUDE_DIRS)
+ include(ExternalEIGEN3)
+ message("EIGEN3 -> ${EIGEN3_INCLUDE_DIRS}")
+endif()
 
 option(LIBCZI_BUILD_DYNLIB "Build dynamic library 'libCZI'." ON)
 option(LIBCZI_BUILD_STATICLIB "Build static library 'libCZI'." ON)
