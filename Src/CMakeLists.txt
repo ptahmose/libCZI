@@ -3,8 +3,8 @@ cmake_minimum_required(VERSION 3.0.2)
 IF(UNIX)
 # linking with 'thread' is necessary if we use std::thread and related under Linux it seems
 #   otherwise - the program simply crashes (no build-error)
-   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread -std=c++11 -fPIC -D_FILE_OFFSET_BITS=64")
-   SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D__ANSI__ -fPIC -D_FILE_OFFSET_BITS=64")
+   #SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread -std=c++11 -fPIC")
+   #SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D__ANSI__ -fPIC")
 ENDIF(UNIX)
 
 IF(CMAKE_COMPILER_IS_GNUCXX)
@@ -45,14 +45,13 @@ option(LIBCZI_IGNORE_INSTALLED_EIGEN3 "Ignore an existing Eigen3-package (and al
 if (NOT LIBCZI_IGNORE_INSTALLED_EIGEN3)
  find_package(Eigen3 NO_MODULE)
  if (TARGET Eigen3::Eigen)
-   set(EIGEN3_INCLUDE_DIRS ${EIGEN3_INCLUDE_DIR})
    message(STATUS "using existing Eigen3-package -> ${EIGEN3_INCLUDE_DIR}")
  endif()
 endif()
 
-if (NOT EIGEN3_INCLUDE_DIRS)
+if (NOT EIGEN3_INCLUDE_DIR)
  include(ExternalEIGEN3)
- message("using downloaded Eigen3 -> ${EIGEN3_INCLUDE_DIRS}")
+ message("using downloaded Eigen3 -> ${EIGEN3_INCLUDE_DIR}")
 endif()
 
 option(LIBCZI_BUILD_DYNLIB "Build dynamic library 'libCZI'." ON)

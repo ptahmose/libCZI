@@ -12,4 +12,4 @@ ExternalProject_Add(
 )
 
 ExternalProject_Get_Property(eigen_ext source_dir)
-set(EIGEN3_INCLUDE_DIRS ${source_dir})
+set(EIGEN3_INCLUDE_DIR ${source_dir})
