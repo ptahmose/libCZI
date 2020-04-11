@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.11)
 
 find_package(GTest QUIET)
-#find_package(GMock QUIET)
+find_package(GMock QUIET)
 
-#if ("${GTest_FOUND}" AND "${GMock_FOUND}")
-if ("${GTest_FOUND}")
+if ("${GTest_FOUND}" AND "${GMock_FOUND}")
+#if ("${GTest_FOUND}")
     message(STATUS "Found GTest, using it.")
 else()
     message(STATUS "Did not find package GTest, will attempt to fetch it locally.")
@@ -36,7 +36,7 @@ add_executable( libCZI_UnitTests
                     testImage.cpp
                     testImage.h 
                     "test_splines.cpp" 
-                    "test_reader.cpp" "test_CziSubBlockDirectory.cpp" "test_DimCoordinate.cpp" "test_DisplaySettings.cpp" "test_IndexSet.cpp" "test_LUT.cpp" "MockMetadataSegment.cpp")
+                    "test_reader.cpp" "test_CziSubBlockDirectory.cpp" "test_DimCoordinate.cpp" "test_DisplaySettings.cpp" "test_IndexSet.cpp" "test_LUT.cpp" "MockMetadataSegment.cpp" "main.cpp")
 
 if (UNIX)
   find_package(Threads REQUIRED)
@@ -51,9 +51,10 @@ endif()
 
 message(STATUS ${GTEST_INCLUDE_DIRS})
 
-target_include_directories(libCZI_UnitTests PRIVATE ${GTEST_INCLUDE_DIRS} $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../libCZI/>)
+target_include_directories(libCZI_UnitTests PRIVATE ${GMOCK_INCLUDE_DIRS} ${GTEST_INCLUDE_DIRS} $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../libCZI/>)
 
-target_link_libraries(libCZI_UnitTests PRIVATE ${GTEST_BOTH_LIBRARIES} libCZIStatic)
+#target_link_libraries(libCZI_UnitTests PRIVATE ${GTEST_BOTH_LIBRARIES} ${GMOCK_LIBRARIES} libCZIStatic)
+target_link_libraries(libCZI_UnitTests PRIVATE gtest gmock libCZIStatic)
 
 set_target_properties(libCZI_UnitTests PROPERTIES DEBUG_POSTFIX "d")
 

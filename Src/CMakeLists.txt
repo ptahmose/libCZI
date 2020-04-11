@@ -42,6 +42,7 @@ endif()
 
 option(LIBCZI_IGNORE_INSTALLED_EIGEN3 "Ignore an existing Eigen3-package (and always download external project)" OFF)
 
+#[[
 if (NOT LIBCZI_IGNORE_INSTALLED_EIGEN3 AND NOT EXTERNALPROJECT_EIGEN3)
  find_package(Eigen3 NO_MODULE)
  if (TARGET Eigen3::Eigen)
@@ -51,12 +52,13 @@ if (NOT LIBCZI_IGNORE_INSTALLED_EIGEN3 AND NOT EXTERNALPROJECT_EIGEN3)
    unset(EXTERNALPROJECT_EIGEN3)
  endif()
 endif()
+]]
 
-if (NOT EIGEN3_INCLUDE_DIR)
+#if (NOT EIGEN3_INCLUDE_DIR)
  include(ExternalEIGEN3)
  set(EXTERNALPROJECT_EIGEN3 1)
  message("using downloaded Eigen3 -> ${EIGEN3_INCLUDE_DIR}")
-endif()
+#endif()
 
 option(LIBCZI_BUILD_DYNLIB "Build dynamic library 'libCZI'." ON)
 option(LIBCZI_BUILD_STATICLIB "Build static library 'libCZI'." ON)
