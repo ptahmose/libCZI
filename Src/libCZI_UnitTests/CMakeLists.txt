@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.11)
 find_package(GTest QUIET)
 find_package(GMock QUIET)
 
-if ("${GTest_FOUND}" AND ${GMock_FOUND}")
+if ("${GTest_FOUND}" AND "${GMock_FOUND}")
     message(STATUS "Found GTest and GMock, using it.")
 else()
     message(STATUS "Did not find package GTest, will attempt to fetch it locally.")
