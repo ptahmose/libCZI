@@ -45,7 +45,7 @@ if (UNIX)
     set_property(TARGET libCZI_UnitTests PROPERTY INTERFACE_COMPILE_OPTIONS "-pthread")
   endif()
   if(CMAKE_THREAD_LIBS_INIT)
-    target_link_libraries(libCZI_UnitTests "${CMAKE_THREAD_LIBS_INIT}")
+    target_link_libraries(libCZI_UnitTests PRIVATE "${CMAKE_THREAD_LIBS_INIT}")
   endif()
 endif()
 
