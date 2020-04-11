@@ -25,6 +25,22 @@ else()
     endif()
 endif()
 
+# Prevent overriding the parent project's compiler/linker
+# settings on Windows
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+
+if (UNIX)
+  find_package(Threads REQUIRED)
+  if(THREADS_HAVE_PTHREAD_ARG)
+    set_property(TARGET libCZI_UnitTests PROPERTY COMPILE_OPTIONS "-pthread")
+    set_property(TARGET libCZI_UnitTests PROPERTY INTERFACE_COMPILE_OPTIONS "-pthread")
+  endif()
+  if(CMAKE_THREAD_LIBS_INIT)
+    target_link_libraries(libCZI_UnitTests "${CMAKE_THREAD_LIBS_INIT}")
+  endif()
+endif()
+
+
 add_executable( libCZI_UnitTests 
                     pch.cpp 
                     pch.h 
@@ -41,5 +57,7 @@ target_include_directories(libCZI_UnitTests PRIVATE ${GTEST_INCLUDE_DIRS} $<BUIL
 target_link_libraries(libCZI_UnitTests PRIVATE ${GTEST_BOTH_LIBRARIES} libCZIStatic)
 
 set_target_properties(libCZI_UnitTests PROPERTIES DEBUG_POSTFIX "d")
+
+set_target_properties(libCZI_UnitTests PROPERTIES CXX_STANDARD 11 CXX_STANDARD_REQUIRED YES) 
 
 add_test( libCZI_UnitTests  libCZI_UnitTests  )
