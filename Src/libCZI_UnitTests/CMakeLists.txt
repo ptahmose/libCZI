@@ -5,7 +5,7 @@ find_package(GTest QUIET)
 
 #if ("${GTest_FOUND}" AND "${GMock_FOUND}")
 if ("${GTest_FOUND}")
-    message(STATUS "Found GTest and GMock, using it.")
+    message(STATUS "Found GTest, using it.")
 else()
     message(STATUS "Did not find package GTest, will attempt to fetch it locally.")
 
@@ -36,7 +36,7 @@ add_executable( libCZI_UnitTests
                     testImage.cpp
                     testImage.h 
                     "test_splines.cpp" 
-                    "test_reader.cpp" "test_CziSubBlockDirectory.cpp" "test_DimCoordinate.cpp" "test_DisplaySettings.cpp" "test_IndexSet.cpp" "test_LUT.cpp")
+                    "test_reader.cpp" "test_CziSubBlockDirectory.cpp" "test_DimCoordinate.cpp" "test_DisplaySettings.cpp" "test_IndexSet.cpp" "test_LUT.cpp" "MockMetadataSegment.cpp")
 
 if (UNIX)
   find_package(Threads REQUIRED)
