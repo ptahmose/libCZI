@@ -1,3 +1,4 @@
+cmake_minimum_required(VERSION 3.11)
 
 find_package(GTest QUIET)
 
