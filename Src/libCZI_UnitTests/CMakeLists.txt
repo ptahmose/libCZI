@@ -36,7 +36,15 @@ add_executable( libCZI_UnitTests
                     testImage.cpp
                     testImage.h 
                     "test_splines.cpp" 
-                    "test_reader.cpp" "test_CziSubBlockDirectory.cpp" "test_DimCoordinate.cpp" "test_DisplaySettings.cpp" "test_IndexSet.cpp" "test_LUT.cpp" "MockMetadataSegment.cpp" "main.cpp")
+                    "test_reader.cpp" 
+                    "test_CziSubBlockDirectory.cpp" 
+                    "test_DimCoordinate.cpp" 
+                    "test_DisplaySettings.cpp" 
+                    "test_IndexSet.cpp" 
+                    "test_LUT.cpp" 
+                    "MockMetadataSegment.cpp" 
+                    "main.cpp" 
+                    "test_Utilities.cpp")
 
 if (UNIX)
   find_package(Threads REQUIRED)
