@@ -29,6 +29,15 @@ endif()
 # settings on Windows
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 
+add_executable( libCZI_UnitTests 
+                    pch.cpp 
+                    pch.h 
+                    test_bitmapOperations.cpp
+                    testImage.cpp
+                    testImage.h 
+                    "test_splines.cpp" 
+                    "test_reader.cpp")
+
 if (UNIX)
   find_package(Threads REQUIRED)
   if(THREADS_HAVE_PTHREAD_ARG)
@@ -39,16 +48,6 @@ if (UNIX)
     target_link_libraries(libCZI_UnitTests "${CMAKE_THREAD_LIBS_INIT}")
   endif()
 endif()
-
-
-add_executable( libCZI_UnitTests 
-                    pch.cpp 
-                    pch.h 
-                    test_bitmapOperations.cpp
-                    testImage.cpp
-                    testImage.h 
-                    "test_splines.cpp" 
-                    "test_reader.cpp")
 
 message(STATUS ${GTEST_INCLUDE_DIRS})
 
