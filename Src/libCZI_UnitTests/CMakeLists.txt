@@ -28,12 +28,12 @@ add_executable( libCZI_UnitTests
                     pch.h 
                     test_bitmapOperations.cpp
                     testImage.cpp
-                    testImage.h "test_splines.cpp" "test_reader.cpp")
+                    testImage.h 
+                    "test_splines.cpp" 
+                    "test_reader.cpp")
 
-target_include_directories(libCZI_UnitTests PRIVATE ${GTEST_INCLUDE_DIRS} )
-target_include_directories(libCZI_UnitTests PRIVATE
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../libCZI/>
-)
+target_include_directories(libCZI_UnitTests PRIVATE ${GTEST_INCLUDE_DIRS} $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../libCZI/>)
+
 target_link_libraries(libCZI_UnitTests PRIVATE ${GTEST_BOTH_LIBRARIES} libCZIStatic)
 
 set_target_properties(libCZI_UnitTests PROPERTIES DEBUG_POSTFIX "d")
