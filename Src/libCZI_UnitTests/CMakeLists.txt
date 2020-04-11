@@ -32,6 +32,8 @@ add_executable( libCZI_UnitTests
                     "test_splines.cpp" 
                     "test_reader.cpp")
 
+message(STATUS ${GTEST_INCLUDE_DIRS})
+
 target_include_directories(libCZI_UnitTests PRIVATE ${GTEST_INCLUDE_DIRS} $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../libCZI/>)
 
 target_link_libraries(libCZI_UnitTests PRIVATE ${GTEST_BOTH_LIBRARIES} libCZIStatic)
