@@ -128,7 +128,7 @@ TEST(MultichannelComposite, Test3)
 
 	ScopedBitmapLockerSP lckDst{ bmDst };
 
-	for (int i = 0; i < 256 * 256; ++i)
+	for (size_t i = 0; i < 256 * 256; ++i)
 	{
 		const uint8_t* ptr = ((const uint8_t*)lckDst.ptrDataRoi) + (i * 3);
 		uint8_t b = ptr[0];
