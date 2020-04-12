@@ -19,8 +19,10 @@ else()
     FetchContent_GetProperties(googletest)
     if(NOT googletest_POPULATED)
         FetchContent_Populate(googletest)
+
+        # we need to patch this file for solving a compilation-error on OpenBSD
+        file(COPY patch_gtest/gtest-port.cc DESTINATION ${googletest_SOURCE_DIR}/googletest/src)
 	  	  add_subdirectory(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR})
-                target_compile_options(gtest_main PRIVATE -Wno-error=sign-compare)
 		    set(GTEST_INCLUDE_DIRS ${googletest_SOURCE_DIR}/googletest/include)
 		    set(GTEST_BOTH_LIBRARIES ${CMAKE_BINARY_DIR}/lib/libgtest.a ${CMAKE_BINARY_DIR}/lib/libgtest_main.a)    
     endif()
