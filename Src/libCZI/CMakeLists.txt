@@ -24,9 +24,10 @@ endif()
 
 set(libCZI_HAVE_ENDIAN_H ${HAVE_ENDIAN_H}) 
 
-if ((TOLOWER "${CMAKE_SYSTEM_PROCESSOR}"  STREQUAL "sparc64") OR
-    (TOLOWER "${CMAKE_SYSTEM_PROCESSOR}"  STREQUAL "sparc32") OR
-		(TOLOWER "${CMAKE_SYSTEM_PROCESSOR}"  STREQUAL "sparc"))
+string(TOLOWER "${CMAKE_SYSTEM_PROCESSOR}" system_processor_lower )
+if ((system_processor_lower  STREQUAL "sparc64") OR
+    (system_processor_lower  STREQUAL "sparc32") OR
+		(system_processor_lower  STREQUAL "sparc"))
 	set (libCZI_CrashOnUnalignedIntegers 1)
 else()
 	set (libCZI_CrashOnUnalignedIntegers 0)
