@@ -47,7 +47,10 @@ add_executable( libCZI_UnitTests
                     "test_LUT.cpp" 
                     "MockMetadataSegment.cpp" 
                     "main.cpp" 
-                    "test_Utilities.cpp")
+                    "test_Utilities.cpp" 
+                    "test_multichannelcomposite.cpp" 
+                    "test_StreamImplementations.cpp" 
+                    "test_metadatareading.cpp")
 
 if (UNIX)
   find_package(Threads REQUIRED)
