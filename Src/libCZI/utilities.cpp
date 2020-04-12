@@ -104,11 +104,6 @@ tString trimImpl(const tString& str, const tString& whitespace)
 	std::wstring_convert<std::codecvt_utf8<wchar_t>> utf8conv;
 	std::wstring conv = utf8conv.from_bytes(sz);
 	return conv;
-	/*size_t len = strlen(sz);
-	std::wstring conv(len, 0);
-	size_t size = std::mbstowcs(&conv[0], sz, len);
-	conv.resize(size);
-	return conv;*/
 }
 
 /*static*/void Utilities::Tokenize(const std::wstring& str, std::vector<std::wstring>& tokens, const std::wstring& delimiters)
