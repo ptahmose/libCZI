@@ -201,11 +201,27 @@ tString trimImpl(const tString& str, const tString& whitespace)
 {
 #if LIBCZI_ISBIGENDIANHOST
 #if LIBCZI_HAVE_ENDIAN_H
-	*p = le16toh(*p);
+	#if LIBCZI_SIGBUS_ON_UNALIGNEDINTEGERS
+		int16_t x;
+		memcpy(&x, p, sizeof(int16_t));
+		x = le16toh(x);
+		memcpy(p, &x, sizeof(int16_t));
+	#else
+		*p = le16toh(*p);
+	#endif
 #else
-	int16_t v = *p;
+	#if LIBCZI_SIGBUS_ON_UNALIGNEDINTEGERS
+		int16_t v;
+		memcpy(&v, p, sizeof(int16_t));
+	#else
+		int16_t v = *p;
+	#endif
 	v = ((v & 0x00ff) << 8) | ((v & 0xff00) >> 8);
-	*p = v;
+	#if LIBCZI_SIGBUS_ON_UNALIGNEDINTEGERS
+		memcpy(p, &v, sizeof(int16_t));
+	#else
+		*p = v;
+	#endif
 #endif
 #endif
 }
@@ -214,12 +230,28 @@ tString trimImpl(const tString& str, const tString& whitespace)
 {
 #if LIBCZI_ISBIGENDIANHOST
 #if LIBCZI_HAVE_ENDIAN_H
-	*p = le32toh(*p);
+	#if LIBCZI_SIGBUS_ON_UNALIGNEDINTEGERS
+		int32_t x;
+		memcpy(&x, p, sizeof(int32_t));
+		x = le32toh(x);
+		memcpy(p, &x, sizeof(int32_t));
+	#else
+		*p = le32toh(*p);
+	#endif
 #else
-	int32_t v = *p;
+	#if LIBCZI_SIGBUS_ON_UNALIGNEDINTEGERS
+	 int32_t v;
+	 memcpy(&v, p, sizeof(int32_t));
+	#else
+	 int32_t v = *p;
+	#endif
 	v = ((((v) & 0xff000000u) >> 24) | (((v) & 0x00ff0000u) >> 8)
 		| (((v) & 0x0000ff00u) << 8) | (((v) & 0x000000ffu) << 24));
-	*p = v;
+	#if LIBCZI_SIGBUS_ON_UNALIGNEDINTEGERS
+	 memcpy(p, &v, sizeof(int32_t));
+	#else
+	 *p = v;
+	#endif
 #endif
 #endif
 }
@@ -228,9 +260,21 @@ tString trimImpl(const tString& str, const tString& whitespace)
 {
 #if LIBCZI_ISBIGENDIANHOST
 #if LIBCZI_HAVE_ENDIAN_H
+ #if LIBCZI_SIGBUS_ON_UNALIGNEDINTEGERS
+	int64_t x;
+	memcpy(&x, p, sizeof(int64_t));
+	x = le64toh(x);
+	memcpy(p, &x, sizeof(int64_t));
+ #else
 	*p = le64toh(*p);
+ #endif
 #else
-	uint64_t v = *((uint64_t*)p);
+    #if LIBCZI_SIGBUS_ON_UNALIGNEDINTEGERS
+	 uint64_t v;
+	 memcpy(&v, p, sizeof(uint64_t));
+    #else
+	 uint64_t v = *((uint64_t*)p);
+    #endif
 	v = ((((v) & 0xff00000000000000ull) >> 56)
 		| (((v) & 0x00ff000000000000ull) >> 40)
 		| (((v) & 0x0000ff0000000000ull) >> 24)
@@ -240,6 +284,11 @@ tString trimImpl(const tString& str, const tString& whitespace)
 		| (((v) & 0x000000000000ff00ull) << 40)
 		| (((v) & 0x00000000000000ffull) << 56));
 	*p = (int64_t)v;
+	#if LIBCZI_SIGBUS_ON_UNALIGNEDINTEGERS
+		memcpy(p, &v, sizeof(uint64_t));
+	#else
+		*p = (int64_t)v;
+	#endif
 #endif
 #endif
 }

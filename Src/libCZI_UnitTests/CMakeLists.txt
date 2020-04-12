@@ -20,7 +20,7 @@ else()
     if(NOT googletest_POPULATED)
         FetchContent_Populate(googletest)
 
-        # we need to patch this file for solving a compilation-error on OpenBSD
+        # we need to patch this file for solving a compilation-error on OpenBSD -> https://github.com/google/googletest/pull/2810
         file(COPY patch_gtest/gtest-port.cc DESTINATION ${googletest_SOURCE_DIR}/googletest/src)
 	  	  add_subdirectory(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR})
 		    set(GTEST_INCLUDE_DIRS ${googletest_SOURCE_DIR}/googletest/include)

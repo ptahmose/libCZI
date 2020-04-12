@@ -24,12 +24,20 @@ endif()
 
 set(libCZI_HAVE_ENDIAN_H ${HAVE_ENDIAN_H}) 
 
+if ((TOLOWER "${CMAKE_SYSTEM_PROCESSOR}"  STREQUAL "sparc64") OR
+    (TOLOWER "${CMAKE_SYSTEM_PROCESSOR}"  STREQUAL "sparc32") OR
+		(TOLOWER "${CMAKE_SYSTEM_PROCESSOR}"  STREQUAL "sparc"))
+	set (libCZI_CrashOnUnalignedIntegers 1)
+else()
+	set (libCZI_CrashOnUnalignedIntegers 0)
+endif()
+
 string(CONCAT libCZI_CompilerIdentification "\"" ${CMAKE_CXX_COMPILER_ID} " " ${CMAKE_CXX_COMPILER_VERSION} "\"")
 
 configure_file (
   "${CMAKE_CURRENT_SOURCE_DIR}/libCZI_Config.h.in"
   "${CMAKE_CURRENT_BINARY_DIR}/libCZI_Config.h")
-
+	
 
 #  Define headers for this library. PUBLIC headers are used for compiling the library, and will be added to consumers' build paths.
 set(libCZIPublicHeaders "ImportExport.h" "libCZI.h" "libCZI_Compositor.h" "libCZI_DimCoordinate.h" "libCZI_exceptions.h"
