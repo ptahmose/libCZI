@@ -1,4 +1,3 @@
-
 //******************************************************************************
 // 
 // libCZI is a reader for the CZI fileformat written in C++
