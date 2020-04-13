@@ -33,11 +33,11 @@ endif()
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 
 add_executable( libCZI_UnitTests 
-                    pch.cpp 
-                    pch.h 
-                    test_bitmapOperations.cpp
-                    testImage.cpp
-                    testImage.h 
+                    "pch.cpp" 
+                    "pch.h" 
+                    "test_bitmapOperations.cpp"
+                    "testImage.cpp"
+                    "testImage.h" 
                     "test_splines.cpp" 
                     "test_reader.cpp" 
                     "test_CziSubBlockDirectory.cpp" 
@@ -50,7 +50,8 @@ add_executable( libCZI_UnitTests
                     "test_Utilities.cpp" 
                     "test_multichannelcomposite.cpp" 
                     "test_StreamImplementations.cpp" 
-                    "test_metadatareading.cpp")
+                    "test_metadatareading.cpp"
+                    "test_JxrDecode.cpp")
 
 if (UNIX)
   find_package(Threads REQUIRED)
