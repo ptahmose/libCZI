@@ -687,7 +687,13 @@ U32 _byteswap_ulong(U32 bits)
 U32 load4BE(void* pv)
 {
 #ifdef _BIG__ENDIAN_
+ #if _NO_UNALIGNED_LOAD_
+	U32 v;
+	memcpy(&v, pv, 4);
+	return v;
+ #else
 	return (*(U32*)pv);
+ #endif
 #else // _BIG__ENDIAN_
 #if	defined(__EMSCRIPTEN__)
 	U32 v;
