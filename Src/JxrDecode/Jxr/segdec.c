@@ -55,7 +55,13 @@ static Int DecodeSignificantAbsLevel(struct CAdaptiveHuffman *pAHexpt, BitIOInfo
 static U32 _FORCEINLINE _load4(void* pv)
 {
 #ifdef _BIG__ENDIAN_
-	return (*(U32*)pv);
+	#ifdef _NO_UNALIGNED_LOAD_
+		U32 v;
+		memcpy(&v, pv, 4);
+		return v;
+	#else
+		return (*(U32*)pv);
+	#endif
 #else // _BIG__ENDIAN_
 #if defined(__GNUC__) && !defined(__EMSCRIPTEN__)
 	return __builtin_bswap32(*(U32*)pv);
@@ -71,7 +77,13 @@ static U32 _FORCEINLINE _load4(void* pv)
 	v |= ((U32)((U16*)pv)[1]) << 16;
 	return _byteswap_ulong(v);
 #else // _M_IA64
-	return _byteswap_ulong(*(U32*)pv);
+	#ifdef _NO_UNALIGNED_LOAD_
+		U32 v;
+		memcpy(&v, pv, 4);
+		return _byteswap_ulong(v);
+	#else
+		return _byteswap_ulong(*(U32*)pv);
+	#endif
 #endif // _M_IA64
 #endif 
 #endif

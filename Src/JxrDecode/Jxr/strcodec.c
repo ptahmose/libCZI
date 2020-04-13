@@ -707,7 +707,13 @@ U32 load4BE(void* pv)
 	v |= ((U32)((U16 *)pv)[1]) << 16;
 	return _byteswap_ulong(v);
 #else // _M_IA64
+ #ifdef _NO_UNALIGNED_LOAD_
+	U32 v;
+	memcpy(&v, pv, 4);
+	return _byteswap_ulong(v);
+ #else
 	return _byteswap_ulong(*(U32*)pv);
+ #endif
 #endif // _M_IA64
 #endif
 #endif // _BIG__ENDIAN_
