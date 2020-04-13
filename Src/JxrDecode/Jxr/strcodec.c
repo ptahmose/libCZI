@@ -672,7 +672,7 @@ ERR detach_SB(SimpleBitIO* pSB)
 #ifdef _BIG__ENDIAN_
 #define _byteswap_ulong(x)  (x)
 #else // _BIG__ENDIAN_
-U32 _byteswap_ulong(U32 bits)
+U32 _byteswap_ulong(U32 bits)oa
 {
 	U32 r = (bits & 0xffu) << 24;
 	r |= (bits << 8) & 0xff0000u;
@@ -687,7 +687,7 @@ U32 _byteswap_ulong(U32 bits)
 U32 load4BE(void* pv)
 {
 #ifdef _BIG__ENDIAN_
- #if _NO_UNALIGNED_LOAD_
+ #ifdef _NO_UNALIGNED_LOAD_
 	U32 v;
 	memcpy(&v, pv, 4);
 	return v;

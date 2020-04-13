@@ -16,5 +16,5 @@ string(TOLOWER "${CMAKE_SYSTEM_PROCESSOR}" system_processor_lower )
 if ((system_processor_lower  STREQUAL "sparc64") OR  # We are to determine whether we can load an integer from an unaligned address.
     (system_processor_lower  STREQUAL "sparc32") OR  # There should be a better way to do so - maybe compiling a test-program.
 		(system_processor_lower  STREQUAL "sparc"))
-	target_compile_definitions(JxrDecodeStatic PRIVATE _NO_UNALIGNED_LOAD_ 1)
+	target_compile_definitions(JxrDecodeStatic PRIVATE _NO_UNALIGNED_LOAD_)
 endif()
