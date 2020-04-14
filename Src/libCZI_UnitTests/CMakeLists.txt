@@ -30,7 +30,7 @@ endif()
 
 # Prevent overriding the parent project's compiler/linker
 # settings on Windows
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+set(gtest_force_shared_crt OFF CACHE BOOL "" FORCE)
 
 add_executable( libCZI_UnitTests 
                     "pch.cpp" 

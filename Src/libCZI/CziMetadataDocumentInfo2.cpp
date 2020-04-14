@@ -940,7 +940,7 @@ CDimensionsChannelsInfo::CDimensionsChannelsInfo(pugi::xml_node node)
 
 int CDimensionsChannelsInfo::GetChannelCount() const /*override*/
 {
-	return this->channels.size();
+	return (int)this->channels.size();
 }
 
 std::shared_ptr<IDimensionChannelInfo> CDimensionsChannelsInfo::GetChannel(int i) const /*override*/
@@ -1175,7 +1175,7 @@ CDimensionChannelLightSourcesSettings::CDimensionChannelLightSourcesSettings(pug
 
 int CDimensionChannelLightSourcesSettings::GetLightSourceSettingCount() const /*override*/
 {
-	return this->lightSourceSettings.size();
+	return (int)this->lightSourceSettings.size();
 }
 
 std::shared_ptr<IDimensionChannelLightSourcesSetting> CDimensionChannelLightSourcesSettings::GetLightSourceSetting(int i) const /*override*/
