@@ -320,7 +320,7 @@ void CCmdLineOptions::PrintUsage(int switchesCnt, std::function<std::tuple<std::
 			LR"(Calculate a hash for the output-picture. The MD5Sum-algorithm is used for this.)"
 		},
 		{
-			L"b",
+			L"t",
 			L"",
 			LR"(Draw a one-pixel black line around each tile.)"
 		},
