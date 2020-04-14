@@ -32,7 +32,7 @@ B1C4AF4A069877A95E68C5BAAC08274E
 --command ChannelComposite  --rect rel(0,0,1024,768)
 Koala_w_gamma.czi 
 Koala_w_gamma_Out
-6E0CCF8F3ABA3CB08CE10CBE0A0AC88A
+A492DF08F2781987A9B670DCBDE0D3A5
 
 #Testcase 5
 --command ChannelComposite  --rect rel(0,0,1024,768)
