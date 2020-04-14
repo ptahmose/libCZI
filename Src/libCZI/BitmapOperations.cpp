@@ -26,6 +26,7 @@
 #include "utilities.h"
 #include "libCZI.h"
 #include "Site.h"
+#include "inc_libCZI_Config.h"
 
 using namespace libCZI;
 using namespace std;
@@ -42,11 +43,34 @@ using namespace std;
 
 	CMd5Sum md5sum;
 	size_t lineLength = bm->GetWidth() * CziUtils::GetBytesPerPel(bm->GetPixelType());
+#if LIBCZI_ISBIGENDIANHOST
+	if (!CziUtils::IsPixelTypeEndianessAgnostic(bm->GetPixelType()))
+	{
+		for (uint32_t y = 0; y < bm->GetHeight(); ++y)
+		{
+			const std::uint8_t* ptr = ((const std::uint8_t*)lck.ptrDataRoi) + y * ((ptrdiff_t)lck.stride);
+			md5sum.update(ptr, lineLength);
+		}
+	}
+	else
+	{
+		// for compatibility with the little-endian version, we convert pixeltypes for which we have a different byte order - so that the
+		//  hashcode gives the same result
+		std::unique_ptr<void, decltype(free)*> pLineBuffer(malloc((size_t)lineLength), free);
+		for (uint32_t y = 0; y < bm->GetHeight(); ++y)
+		{
+			const std::uint8_t* ptr = ((const std::uint8_t*)lck.ptrDataRoi) + y * ((ptrdiff_t)lck.stride);
+			CopyConvertBigEndian(bm->GetPixelType(), ptr, lck.stride, pLineBuffer.get(), lineLength, bm->GetWidth(), 1);
+			md5sum.update(pLineBuffer.get(), lineLength);
+		}
+	}
+#else
 	for (uint32_t y = 0; y < bm->GetHeight(); ++y)
 	{
 		const std::uint8_t* ptr = ((const std::uint8_t*)lck.ptrDataRoi) + y * ((ptrdiff_t)lck.stride);
 		md5sum.update(ptr, lineLength);
 	}
+#endif
 
 	md5sum.complete();
 	md5sum.getHash((char*)ptrHash);
@@ -340,14 +364,22 @@ using namespace std;
 
 	ScopedBitmapLockerP lckSrc{ source };
 	ScopedBitmapLockerSP lckDst{ dst };
-	switch (pxltype)
+
+	CBitmapOperations::CopyConvertBigEndian(pxltype, lckSrc.ptrDataRoi, lckSrc.stride, lckDst.ptrDataRoi, lckDst.stride, source->GetWidth(), source->GetHeight());
+
+	return dst;
+}
+
+/*static*/void CBitmapOperations::CopyConvertBigEndian(libCZI::PixelType pixelType, const void* pSrc, int srcStride, void* pDst, int dstStride, uint32_t width, uint32_t height)
+{
+	switch (pixelType)
 	{
 	case PixelType::Gray16:
-		for (uint32_t y = 0; y < source->GetHeight(); ++y)
+		for (uint32_t y = 0; y < height; ++y)
 		{
-			const uint16_t* pSrc = (const uint16_t*)(((const char*)lckSrc.ptrDataRoi) + y * ((ptrdiff_t)lckSrc.stride));
-			uint16_t* pDst = (uint16_t*)(((char*)lckDst.ptrDataRoi) + y * ((ptrdiff_t)lckDst.stride));
-			for (uint32_t x = 0; x < source->GetWidth(); ++x)
+			const uint16_t* pSrc = (const uint16_t*)(((const char*)pSrc) + y * ((ptrdiff_t)srcStride));
+			uint16_t* pDst = (uint16_t*)(((char*)pDst) + y * ((ptrdiff_t)dstStride));
+			for (uint32_t x = 0; x < width; ++x)
 			{
 				*(pDst + x) = ((*(pSrc + x)) << 8) | ((*(pSrc + x)) >> 8);
 			}
@@ -355,11 +387,11 @@ using namespace std;
 
 		break;
 	case PixelType::Bgr48:
-		for (uint32_t  y = 0; y < source->GetHeight(); ++y)
+		for (uint32_t y = 0; y < height; ++y)
 		{
-			const uint16_t* pSrc = (const uint16_t*)(((const char*)lckSrc.ptrDataRoi) + y * ((ptrdiff_t)lckSrc.stride));
-			uint16_t * pDst = (uint16_t*)(((char*)lckDst.ptrDataRoi) + y * ((ptrdiff_t)lckDst.stride));
-			for (uint32_t x = 0; x < 3*source->GetWidth(); ++x)
+			const uint16_t* pSrc = (const uint16_t*)(((const char*)pSrc) + y * ((ptrdiff_t)srcStride));
+			uint16_t* pDst = (uint16_t*)(((char*)pDst) + y * ((ptrdiff_t)dstStride));
+			for (uint32_t x = 0; x < 3 * width; ++x)
 			{
 				*(pDst + x) = ((*(pSrc + x)) << 8) | ((*(pSrc + x)) >> 8);
 			}
@@ -369,6 +401,4 @@ using namespace std;
 	default:
 		throw std::logic_error("Function not yet implemented for the specified pixeltype.");
 	}
-
-	return dst;
 }

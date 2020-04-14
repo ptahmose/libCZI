@@ -93,7 +93,7 @@ public:
 	static void RGB48ToBGR48(int w, int h, std::uint16_t* ptr, int stride);
 
 	static std::shared_ptr<libCZI::IBitmapData> ConvertToBigEndian(libCZI::IBitmapData* source);
-
+	static void CopyConvertBigEndian(libCZI::PixelType pixelType, const void* pSrc, int srcStride, void* pDst, int dstStride, std::uint32_t width, std::uint32_t height);
 private:
 	
 	template <libCZI::PixelType tSrcPixelType, libCZI::PixelType tDstPixelType, typename tPixelConverter, typename tFlt>
