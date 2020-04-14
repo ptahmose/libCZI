@@ -44,7 +44,7 @@ using namespace std;
     CMd5Sum md5sum;
     size_t lineLength = bm->GetWidth() * (size_t)CziUtils::GetBytesPerPel(bm->GetPixelType());
 #if LIBCZI_ISBIGENDIANHOST
-    if (!CziUtils::IsPixelTypeEndianessAgnostic(bm->GetPixelType()))
+    if (CziUtils::IsPixelTypeEndianessAgnostic(bm->GetPixelType()))
     {
         for (uint32_t y = 0; y < bm->GetHeight(); ++y)
         {
