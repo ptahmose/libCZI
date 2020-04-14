@@ -33,7 +33,7 @@ B1C4AF4A069877A95E68C5BAAC08274E
 --command ChannelComposite  --rect rel(0,0,1024,768)
 Koala_w_gamma.czi 
 Koala_w_gamma_Out
-6E0CCF8F3ABA3CB08CE10CBE0A0AC88A
+A492DF08F2781987A9B670DCBDE0D3A5
 
 #Testcase 5
 --command ChannelComposite  --rect rel(0,0,1024,768)
@@ -100,7 +100,7 @@ DCV_30MB_gamma_spline-weight_Out
 --command SingleChannelPyramidTileAccessor --plane-coordinate C0 -y 2,6 --rect abs(-311094,160920,272377,268056) -f 1-2,5 -b 0.804,0.804,0.804
 BF.czi
 bf_3scenes
-DF456ECAF1A948609EB62FFD2FF91E65
+43AD7F3CA3BCB4B7A1C7D382731C2F90
 
 #Testcase 16
 --command ExtractAttachment --selection {"name":"Thumbnail"}
