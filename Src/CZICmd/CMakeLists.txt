@@ -30,9 +30,15 @@ set_target_properties(CZIcmd PROPERTIES CXX_STANDARD 11)
 target_compile_definitions(CZIcmd PRIVATE _LIBCZISTATICLIB)
 target_compile_definitions(CZIcmd PRIVATE UNICODE _UNICODE )
 target_link_libraries(CZIcmd PRIVATE libCZIStatic)
+
 IF(UNIX)
-target_link_libraries(CZIcmd PRIVATE ${PNG_LIBRARIES} ${ZLIB_LIBRARIES})
-include_directories(${ZLIB_INCLUDE_DIR} ${PNG_INCLUDE_DIR})
+  target_link_libraries(CZIcmd PRIVATE ${PNG_LIBRARIES} ${ZLIB_LIBRARIES})
+  include_directories(${ZLIB_INCLUDE_DIR} ${PNG_INCLUDE_DIR})
+ENDIF(UNIX)
+
+IF(UNIX)
+  # seems to be problem with glibc I'd reckon -> https://stackoverflow.com/questions/51584960/stdcall-once-throws-stdsystem-error-unknown-error-1
+  target_link_libraries(CZIcmd  PUBLIC pthread)
 ENDIF(UNIX)
 
 
