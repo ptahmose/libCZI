@@ -14,7 +14,8 @@ else()
  FetchContent_Declare(
       googletest
       GIT_REPOSITORY https://github.com/google/googletest.git
-      GIT_TAG        release-1.10.0
+      #GIT_TAG        release-1.10.0
+      GIT_TAG        4c8e6a9fe1c8dbd96f244f076c369f44414d8d32 # this is known to work (and contains the fix below)
     )
     FetchContent_GetProperties(googletest)
     if(NOT googletest_POPULATED)
@@ -23,8 +24,10 @@ else()
         set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
         FetchContent_Populate(googletest)
 
+#[[
         # we need to patch this file for solving a compilation-error on OpenBSD -> https://github.com/google/googletest/pull/2810
         file(COPY patch_gtest/gtest-port.cc DESTINATION ${googletest_SOURCE_DIR}/googletest/src)
+]]
 	  	  add_subdirectory(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR})
 		    set(GTEST_INCLUDE_DIRS ${googletest_SOURCE_DIR}/googletest/include)
 		    set(GTEST_BOTH_LIBRARIES ${CMAKE_BINARY_DIR}/lib/libgtest.a ${CMAKE_BINARY_DIR}/lib/libgtest_main.a)    
