@@ -49,6 +49,9 @@ void libCZI::GetLibCZIVersion(int* pMajor, int* pMinor)
 void libCZI::GetLibCZIBuildInformation(BuildInformation& info)
 {
 	info.compilerIdentification = LIBCZI_CXX_COMPILER_IDENTIFICATION;
+	info.repositoryUrl			= LIBCZI_REPOSITORYREMOTEURL;
+	info.repositoryBranch		= LIBCZI_REPOSITORYBRANCH;
+	info.repositoryTag			= LIBCZI_REPOSITORYHASH;
 }
 
 std::shared_ptr<ICZIReader> libCZI::CreateCZIReader()

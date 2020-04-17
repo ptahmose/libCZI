@@ -78,9 +78,21 @@ namespace libCZI
 	class ISubBlockRepository;
 	class IAttachment;
 
+    /// This structure contains information about the compiler settings and the version of the source
+    /// which was used to create the library.
 	struct BuildInformation
 	{
+        /// The compiler identification. This is a free-form string.
 		std::string	compilerIdentification;
+
+        /// The URL of the repository - if available.
+		std::string repositoryUrl;
+
+		/// The branch - if available.
+		std::string repositoryBranch;
+
+		/// The tag or hash of the repository - if available.
+		std::string repositoryTag;
 	};
 
 	/// Gets the version of the library.

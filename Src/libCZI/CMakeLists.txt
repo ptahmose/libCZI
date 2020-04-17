@@ -33,11 +33,47 @@ else()
 	set (libCZI_CrashOnUnalignedIntegers 0)
 endif()
 
-string(CONCAT libCZI_CompilerIdentification "\"" ${CMAKE_CXX_COMPILER_ID} " " ${CMAKE_CXX_COMPILER_VERSION} "\"")
+string(CONCAT libCZI_CompilerIdentification ${CMAKE_CXX_COMPILER_ID} " " ${CMAKE_CXX_COMPILER_VERSION} )
+
+# get the URL of the upstream repository
+execute_process(
+  COMMAND goit remote get-url origin
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+  OUTPUT_VARIABLE libCZI_REPOSITORYREMOTEURL
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+if (NOT DEFINED libCZI_REPOSITORYREMOTEURL OR "${libCZI_REPOSITORYREMOTEURL}" STREQUAL "")
+	set(libCZI_REPOSITORYREMOTEURL "unknown")
+endif()
+
+execute_process(
+  COMMAND  git rev-parse --abbrev-ref HEAD
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+  OUTPUT_VARIABLE libCZI_REPOSITORYBRANCH
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+if (NOT DEFINED libCZI_REPOSITORYBRANCH OR "${libCZI_REPOSITORYBRANCH}" STREQUAL "")
+	set(libCZI_REPOSITORYBRANCH "unknown")
+endif()
+
+execute_process(
+  COMMAND  git log -1 --format=%H
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+  OUTPUT_VARIABLE libCZI_REPOSITORYHASH
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+if (NOT DEFINED libCZI_REPOSITORYHASH OR "${libCZI_REPOSITORYHASH}" STREQUAL "")
+	set(libCZI_REPOSITORYHASH "unknown")
+endif()
+
+#message("libCZI_REPOSITORYREMOTEURL -> ${libCZI_REPOSITORYREMOTEURL}") 
+#message("libCZI_REPOSITORYBRANCH -> ${libCZI_REPOSITORYBRANCH}") 
+#message("libCZI_REPOSITORYHASH -> ${libCZI_REPOSITORYHASH}") 
 
 configure_file (
   "${CMAKE_CURRENT_SOURCE_DIR}/libCZI_Config.h.in"
-  "${CMAKE_CURRENT_BINARY_DIR}/libCZI_Config.h")
+  "${CMAKE_CURRENT_BINARY_DIR}/libCZI_Config.h"
+	ESCAPE_QUOTES @ONLY)
 	
 
 #  Define headers for this library. PUBLIC headers are used for compiling the library, and will be added to consumers' build paths.
