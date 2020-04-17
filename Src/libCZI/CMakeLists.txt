@@ -37,7 +37,7 @@ string(CONCAT libCZI_CompilerIdentification ${CMAKE_CXX_COMPILER_ID} " " ${CMAKE
 
 # get the URL of the upstream repository
 execute_process(
-  COMMAND goit remote get-url origin
+  COMMAND git remote get-url origin
   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
   OUTPUT_VARIABLE libCZI_REPOSITORYREMOTEURL
   OUTPUT_STRIP_TRAILING_WHITESPACE
