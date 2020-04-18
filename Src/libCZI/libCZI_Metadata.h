@@ -456,6 +456,11 @@ namespace libCZI
 			double x;	///< The normalized x-coordinate of a spline control point.
 			double y;	///< The normalized y-coordinate of a spline control point.
 
+            /// Initializes a new instance of the SplineControlPoint class.
+            /// \param x The x coordinate.
+            /// \param y The y coordinate.
+			SplineControlPoint(double x, double y) : x(x), y(y) {};
+
 			/// Equality operator
 			/// \param rhs The right hand side.
 			/// \returns True if the parameters are considered equivalent.
