@@ -677,7 +677,7 @@ static std::tuple<int, ChannelDisplaySettings> GetChannelInfo(const rapidjson::V
 			{
 				std::uint8_t r, g, b;
 				r = g = b = 0;
-				for (size_t i = 1; i < (std::max)((size_t)7, (size_t)str.size()); ++i)
+				for (size_t i = 1; i < (std::min)(static_cast<size_t>(7), str.size()); ++i)
 				{
 					if (!isxdigit(str[i]))
 					{
