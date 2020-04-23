@@ -222,5 +222,10 @@ namespace libCZI
 		///
 		/// \return True if the enumeration completed, false if it was cancelled (by returning false from the callback).
 		static bool EnumAllCoordinates(const libCZI::CDimBounds& bounds, const std::function<bool(std::uint64_t, const libCZI::CDimCoordinate& coord)>& func);
+
+		/// Fill the specified bitmap with the specified color.
+	   /// \param [in,out] bm         The bitmap.
+	   /// \param          floatColor The color.
+		static void FillBitmap(libCZI::IBitmapData* bm, const libCZI::RgbFloatColor& floatColor);
 	};
 }

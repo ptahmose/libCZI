@@ -546,5 +546,10 @@ std::vector<std::uint8_t> InternalCreate8BitLookUpTableFromGamma(int tableElemen
 	}
 }
 
+/*static*/void Utils::FillBitmap(libCZI::IBitmapData* bm, const libCZI::RgbFloatColor& floatColor)
+{
+	CBitmapOperations::Fill(bm, floatColor);
+}
+
 // ----------------------------------------------------------------------------
 
