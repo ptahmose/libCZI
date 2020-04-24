@@ -6,7 +6,7 @@ add_library(JxrDecodeStatic OBJECT JxrDecode.cpp stdafx.cpp JxrDecode.h stdafx.h
 set_target_properties(JxrDecodeStatic PROPERTIES CXX_STANDARD 11)
 
 # shared libraries need PIC
-set_property(TARGET JxrDecodeStatic PROPERTY POSITION_INDEPENDENT_CODE 1)
+set_property(TARGET JxrDecodeStatic PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 if (IS_BIG_ENDIAN)
  target_compile_definitions(JxrDecodeStatic PRIVATE _BIG__ENDIAN_)
