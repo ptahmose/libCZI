@@ -33,6 +33,28 @@ TEST(MetadataReading, Test1)
 	EXPECT_TRUE(std::find(dimensions.cbegin(), dimensions.cend(), DimensionIndex::B) != dimensions.cend()) << "expected to find B-dimension";
 }
 
+TEST(MetadataReading, ScalingInfoExTest)
+{
+	auto mockMdSegment = make_shared<MockMetadataSegment>();
+	auto md = CreateMetaFromMetadataSegment(mockMdSegment.get());
+
+	EXPECT_TRUE(md->IsXmlValid()) << "Expected valid XML.";
+
+	const auto docInfo = md->GetDocumentInfo();
+
+    const auto scalingInfo = docInfo->GetScalingInfoEx();
+
+	EXPECT_TRUE(scalingInfo.IsScaleXValid());
+	EXPECT_DOUBLE_EQ(scalingInfo.scaleX, 1.6432520108980473e-07);
+	EXPECT_TRUE(scalingInfo.IsScaleYValid());
+	EXPECT_DOUBLE_EQ(scalingInfo.scaleY, 1.6432520108980473e-07);
+	EXPECT_FALSE(scalingInfo.IsScaleZValid());
+
+	EXPECT_TRUE(scalingInfo.defaultUnitFormatX == L"um");
+	EXPECT_TRUE(scalingInfo.defaultUnitFormatY == L"um");
+	EXPECT_TRUE(scalingInfo.defaultUnitFormatZ.empty());
+}
+
 TEST(MetadataReading, InvalidDataTest1)
 {
 	auto mockMdSegment = make_shared<MockMetadataSegment>(MockMetadataSegment::Type::InvalidData);
