@@ -145,6 +145,40 @@ CCziMetadataDocumentInfo::CCziMetadataDocumentInfo(std::shared_ptr<CCziMetadata>
     return scalingInfo;
 }
 
+/*virtual*/libCZI::ScalingInfo CCziMetadataDocumentInfo::GetScalingInfo() const
+{
+    ScalingInfo scalingInfo;
+    auto np = this->GetNode(L"Metadata/Scaling");
+    if (np.empty())
+    {
+        return scalingInfo;
+    }
+
+    static const struct
+    {
+        char	dimChar;
+        double(ScalingInfo::* scaleVarPtr);
+    } dimScalingData[] =
+    {
+        {'X', &ScalingInfoEx::scaleX},
+        {'Y', &ScalingInfoEx::scaleY},
+        {'Z', &ScalingInfoEx::scaleZ},
+    };
+
+    for (const auto d : dimScalingData)
+    {
+        wstringstream ss;
+        ss << L"Items/Distance[@Id='" << d.dimChar << L"']/Value";
+        auto nodeScalingValue = np.select_single_node(ss.str().c_str());
+        if (!nodeScalingValue.node().empty())
+        {
+            scalingInfo.*d.scaleVarPtr = nodeScalingValue.node().text().as_double();
+        }
+    }
+
+    return scalingInfo;
+}
+
 /*virtual*/void CCziMetadataDocumentInfo::EnumDimensions(std::function<bool(libCZI::DimensionIndex)> enumDimensions)
 {
     for (const auto& it : this->dimensions)

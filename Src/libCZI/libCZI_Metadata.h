@@ -704,9 +704,13 @@ namespace libCZI
 		/// \return The "general document information".
 		virtual GeneralDocumentInfo GetGeneralDocumentInfo() const = 0;
 
+		/// Gets "extended scaling information".
+		/// \return The "extended scaling information".
+		virtual libCZI::ScalingInfoEx GetScalingInfoEx() const = 0;
+
 		/// Gets "scaling information".
 		/// \return The "scaling information".
-		virtual libCZI::ScalingInfoEx GetScalingInfoEx() const = 0;
+		virtual libCZI::ScalingInfo GetScalingInfo() const = 0;
 
 		/// Enumerate the dimensions (defined in the metadata under Metadata/Information/Image, checking for the nodes
 		/// StartZ, SizeZ, StartC, SizeC, StartT, StartT, ...).
@@ -749,13 +753,6 @@ namespace libCZI
 			std::vector<DimensionIndex> vec;
 			this->EnumDimensions([&](DimensionIndex i)->bool {vec.push_back(i); return true; });
 			return vec;
-		}
-
-		/// Gets "scaling information".
-        /// \return The "scaling information".
-		libCZI::ScalingInfo GetScalingInfo() const
-		{
-			return libCZI::ScalingInfo(this->GetScalingInfoEx());
 		}
 	};
 

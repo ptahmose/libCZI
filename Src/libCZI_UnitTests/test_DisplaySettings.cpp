@@ -20,7 +20,7 @@ TEST(DisplaySettings, Test1)
 
 	EXPECT_TRUE(pod.channelDisplaySettings.size() == 5) << "Expected to have a size of 5.";
 
-	for (size_t i = 0; i < pod.channelDisplaySettings.size(); ++i)
+	for (int i = 0; i < static_cast<int>(pod.channelDisplaySettings.size()); ++i)
 	{
 		EXPECT_TRUE(pod.channelDisplaySettings[i].isEnabled == true) << "Expected the channel to be enabled";
 		EXPECT_TRUE(pod.channelDisplaySettings[i].tintingMode == IDisplaySettings::TintingMode::Color) << "Expected the tinting mode to be 'Color'";
