@@ -146,10 +146,10 @@ namespace libCZI
 
 		/// Retrieves an informal string representing the specified pixeltype. 
 		///
-		/// \param pxltp The pixel-type.
+		/// \param pixeltype The pixel-type.
 		///
 		/// \return A pointer to a static string. Will always be non-null (even in case of an invalid value for <tt>pxltp</tt>.
-		static const char* PixelTypeToInformalString(libCZI::PixelType pxltp);
+		static const char* PixelTypeToInformalString(libCZI::PixelType pixeltype);
 
 		/// Retrieves an informal string representing the specified compression mode. 
 		///

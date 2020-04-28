@@ -228,7 +228,7 @@ namespace libCZI
 		/// bitmap here (and, if called twice, a new bitmap is created). One should not rely
 		/// on this behavior, it is conceivable that in a later version the sub-block will
 		/// keep a reference (and return the same bitmap if called twice).
-		/// In current version this method is equivalant to calling CreateBitmapFromSubBlock.
+		/// In current version this method is equivalent to calling CreateBitmapFromSubBlock.
 		/// \return The bitmap (contained in this sub-block).
 		virtual std::shared_ptr<IBitmapData> CreateBitmap() = 0;
 
@@ -243,7 +243,7 @@ namespace libCZI
 		{
 			const void* p;
 			this->DangerousGetRawData(type, p, size);
-			ptr = (Q*)p;
+			ptr = static_cast<Q*>(p);
 		}
 	};
 

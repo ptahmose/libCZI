@@ -331,9 +331,9 @@ std::vector<std::uint8_t> InternalCreate8BitLookUpTableFromGamma(int tableElemen
 	return bmDest;
 }
 
-/*static*/const char* Utils::PixelTypeToInformalString(libCZI::PixelType pxltp)
+/*static*/const char* Utils::PixelTypeToInformalString(libCZI::PixelType pixeltype)
 {
-	switch (pxltp)
+	switch (pixeltype)
 	{
 	case PixelType::Invalid:			return "invalid";
 	case PixelType::Gray8:				return "gray8";
