@@ -371,6 +371,7 @@ using namespace libCZI;
 		ConvertToHostByteOrder::Convert(&subBlckSegment.data.entryDV);
 		sbd.compression = subBlckSegment.data.entryDV.Compression;
 		sbd.pixelType = subBlckSegment.data.entryDV.PixelType;
+		sbd.mIndex = (std::numeric_limits<int>::max)();
 		ConvertToHostByteOrder::Convert(subBlckSegment.data.entryDV.DimensionEntries, subBlckSegment.data.entryDV.DimensionCount);
 		for (int i = 0; i < subBlckSegment.data.entryDV.DimensionCount; ++i)
 		{

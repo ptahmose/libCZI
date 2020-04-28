@@ -87,8 +87,7 @@ public:
 		libCZI::CDimCoordinate	coordinate;
 		libCZI::IntRect			logicalRect;
 		libCZI::IntSize			physicalSize;
-		int						mIndex;
-		double					zoom;
+		int						mIndex;			// if not present, then this is int::max
 	};
 
 	static SubBlockData ReadSubBlock(libCZI::IStream* str, std::uint64_t offset, const SubBlockStorageAllocate& allocateInfo);
