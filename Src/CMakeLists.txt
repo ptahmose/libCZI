@@ -79,7 +79,10 @@ option(LIBCZI_BUILD_STATICLIB "Build static library 'libCZI'." ON)
 add_subdirectory(JxrDecode)
 add_subdirectory(libCZI)
 
-add_subdirectory(libCZI_UnitTests)
+option(LIBCZI_BUILD_UNITTESTS "Build unit-tests 'libCZI_UnitTests'." ON)
+if (LIBCZI_BUILD_UNITTESTS)
+    add_subdirectory(libCZI_UnitTests)
+endif(LIBCZI_BUILD_UNITTESTS)
 
 option(LIBCZI_BUILD_CZICMD "Build application 'CZICmd'." ON)
 if (LIBCZI_BUILD_CZICMD)
