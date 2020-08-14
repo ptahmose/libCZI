@@ -394,7 +394,7 @@ namespace libCZI
 		/// The layer number starts with 0 with the highest resolution layer.
 		/// The lowest level (layer 0) is denoted by pyramidLayerNo == 0 AND minificationFactor==0.
 		/// Another special case is pyramidLayerNo == 0xff AND minificationFactor==0xff which means that the
-		/// pyramid-layer could not be determined (=the minification factor could not unambigiuosly correlated to
+		/// pyramid-layer could not be determined (=the minification factor could not unambiguously correlated to
 		/// a pyramid-layer).
 		struct PyramidLayerInfo
 		{
@@ -539,7 +539,7 @@ namespace libCZI
 
 		/// Reads the metadata segment from the stream.
 		/// \remark
-		/// If the class is not operational (i. e. Open was not called or Open was not successfull), then an exception of type std::logic_error is thrown.
+		/// If the class is not operational (i. e. Open was not called or Open was not successful), then an exception of type std::logic_error is thrown.
 		///
 		/// \return The metadata segment.
 		virtual std::shared_ptr<IMetadataSegment> ReadMetadataSegment() = 0;
@@ -547,7 +547,7 @@ namespace libCZI
 		/// Creates an accessor for the sub-blocks.
 		/// See also the various typed methods: `CreateSingleChannelTileAccessor`, `CreateSingleChannelPyramidLayerTileAccessor` and `CreateSingleChannelScalingTileAccessor`.
 		/// \remark
-		/// If the class is not operational (i. e. Open was not called or Open was not successfull), then an exception of type std::logic_error is thrown.
+		/// If the class is not operational (i. e. Open was not called or Open was not successful), then an exception of type std::logic_error is thrown.
 		///
 		/// \param accessorType The type of the accessor.
 		///
@@ -556,7 +556,7 @@ namespace libCZI
 
 		/// Closes CZI-reader. The underlying stream-object will be released, and further calls to
 		/// other methods will fail. The stream is also closed when the object is destroyed, so it
-		/// is usually not neccesary to explitely call `Close`. Also, take care that the ownership of
+		/// is usually not necessary to explicitly call `Close`. Also, take care that the ownership of
 		/// the class must be defined when calling `Close`.
 		virtual void Close() = 0;
 	public:
