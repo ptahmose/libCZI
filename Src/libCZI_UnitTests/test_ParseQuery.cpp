@@ -63,3 +63,16 @@ TEST(ParseQuery, Tokenize4)
 
     EXPECT_TRUE(exceptionOccurred);
 }
+
+TEST(ParseQuery, GenerateTokenList1)
+{
+    auto tis = CParserUtils::Tokenize("  T=3 AND Z=1 OR C=0");
+    auto tirpn = CParserUtils::ConvertToReversePolnish(tis);
+
+    EXPECT_EQ(tirpn.size(), 5) << "Expected 5 tokens";
+    EXPECT_TRUE(tirpn[0].token == Token::Condition && tirpn[0].condition.GetDimension() == 'T');
+    EXPECT_TRUE(tirpn[1].token == Token::Condition && tirpn[1].condition.GetDimension() == 'Z');
+    EXPECT_TRUE(tirpn[2].token == Token::Operator && tirpn[2].op == Operator::AND);
+    EXPECT_TRUE(tirpn[3].token == Token::Condition && tirpn[3].condition.GetDimension() == 'C');
+    EXPECT_TRUE(tirpn[4].token == Token::Operator && tirpn[4].op == Operator::OR);
+}
