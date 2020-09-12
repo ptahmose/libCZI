@@ -8,6 +8,8 @@ class CParserUtils
 {
 public:
     static std::vector<libCZI::TokenItem> Tokenize(const std::string& str);
+    static std::vector <libCZI::TokenItem > ConvertToReversePolnish(const std::vector<libCZI::TokenItem>& src);
+    static bool CheckTokenList(const std::vector<libCZI::TokenItem>& tokens);
 private:
     static std::once_flag initRegex;
 
@@ -41,6 +43,7 @@ private:
     static void SetDimensionFromString(const std::string& str, libCZI::CCondition& condition);
     static std::vector<int> ParseListOfIntegers(const std::string& str);
     static libCZI::ConditionType StringToConditionType(const std::string& str);
+    static bool IsOperatorPrecedenceHigher(libCZI::Operator a, libCZI::Operator b);
 
     static RegexInfo regExInfo;
 };
