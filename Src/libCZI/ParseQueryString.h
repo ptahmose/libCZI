@@ -1,0 +1,46 @@
+#pragma once
+
+#include <regex>
+#include <mutex>  
+#include "libCZI.h"
+
+class CParserUtils
+{
+public:
+    static std::vector<libCZI::TokenItem> Tokenize(const std::string& str);
+private:
+    static std::once_flag initRegex;
+
+    struct RegexInfo
+    {
+        std::regex regEx;
+
+        /// The capture-group index of "relation statement" (e.g. T >= 4).
+        int     indexRelationStatement;
+        int     indexRelationDimension;
+        /// The capture-group index for "relation statement", this is the relational symbol (e.g. =, >, >=, ...)
+        int     indexRelationOp;
+        /// The capture-group index for "relation statement", this is the number.
+        int     indexRelationConstant;
+
+        /// The capture-group index of "range statement" (e.g. T=[2, 4]).
+        int indexRangeStatement;
+        int indexRangeDimension;
+        /// The capture-group index for "range statement", this is the start number.
+        int indexRangeStart;
+        /// The capture-group index for "range statement", this is the end number.
+        int indexRangeEnd;
+
+        int indexListStatement;
+        int indexListDimension;
+        int indexListNumberList;
+    };
+
+    static const RegexInfo& GetRegex();
+    static std::string GetRegexExpression(const std::string& possibleDimensions);
+    static void SetDimensionFromString(const std::string& str, libCZI::CCondition& condition);
+    static std::vector<int> ParseListOfIntegers(const std::string& str);
+    static libCZI::ConditionType StringToConditionType(const std::string& str);
+
+    static RegexInfo regExInfo;
+};

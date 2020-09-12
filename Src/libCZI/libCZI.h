@@ -583,4 +583,5 @@ namespace libCZI
 	};
 }
 
+#include "libCZI_Query.h"
 #include "libCZI_Helpers.h"

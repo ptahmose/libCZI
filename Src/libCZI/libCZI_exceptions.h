@@ -202,7 +202,7 @@ namespace libCZI
 		ErrorCode errorCode;
 	};
 
-        /// Exception for signaling errors when accessing the XML-metadata (.
+    /// Exception for signaling errors when accessing the XML-metadata.
 	class LibCZIMetadataException : public LibCZIException
 	{
 	public:
@@ -241,5 +241,37 @@ namespace libCZI
 		{
 		}
 	};
+
+	/// Exception for signaling errors when parsing a query-string.
+	class LibCZIQueryParseException : public LibCZIException
+	{
+	public:
+		/// Values that represent different error conditions.
+		enum class ErrorType
+		{
+			SyntaxError,
+			UnbalancedParenthesis,
+			IllformedExpression,
+		};
+	private:
+		ErrorType errorType;
+		int parseErrorAfterCharNo;
+	public:
+		LibCZIQueryParseException(const char* szErrMsg, ErrorType errorType)
+			: LibCZIQueryParseException(szErrMsg, errorType, -1)
+		{}
+
+		/// Constructor.
+		/// \param szErrMsg Message describing the error.
+		explicit LibCZIQueryParseException(const char* szErrMsg, ErrorType errorType, int indexOfParseError)
+			: LibCZIException(szErrMsg), 
+			errorType(errorType), 
+			parseErrorAfterCharNo(indexOfParseError)
+		{}
+
+		ErrorType GetErrorType() const { return this->errorType; }
+		int GetPositionAfterWhichParserErrorOccurred() const { return this->parseErrorAfterCharNo; }
+	};
+
 }
 

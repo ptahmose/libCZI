@@ -53,7 +53,8 @@ add_executable( libCZI_UnitTests
                     "test_multichannelcomposite.cpp" 
                     "test_StreamImplementations.cpp" 
                     "test_metadatareading.cpp"
-                    "test_JxrDecode.cpp")
+                    "test_JxrDecode.cpp" 
+                    "test_ParseQuery.cpp")
 
 if (UNIX)
   find_package(Threads REQUIRED)

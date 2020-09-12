@@ -5,7 +5,7 @@ ExternalProject_Add(
   eigen_ext
   PREFIX "vendor/eigen3"
   GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
-  #GIT_TAG        39142904cc2301628931481e8b331cc2d567e22f  # this is "known-to-work", just in case
+  GIT_TAG        39142904cc2301628931481e8b331cc2d567e22f  # this is "known-to-work", just in case
   CMAKE_ARGS
     -DEIGEN_BUILD_PKGCONFIG=OFF
     -DBUILD_TESTING=OFF
