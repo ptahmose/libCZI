@@ -45,7 +45,7 @@ using namespace libCZI;
     return CParserUtils::regExInfo;
 }
 
-/*static*/std::vector<libCZI::TokenItem> CParserUtils::Tokenize(const std::string& str)
+/*static*/std::vector<TokenItem> CParserUtils::Tokenize(const std::string& str)
 {
     std::vector<TokenItem> tokens;
     const auto& regExInfo = CParserUtils::GetRegex();

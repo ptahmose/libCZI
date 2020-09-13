@@ -4,6 +4,123 @@
 #include <mutex>  
 #include "libCZI.h"
 
+enum class Operator : std::uint8_t
+{
+    AND = 1,
+    OR = 2,
+    XOR = 3,
+    NOT = 4,
+
+    LAST = 4
+};
+
+enum class Token
+{
+    Invalid,
+    Condition,
+    Operator,
+    LeftParenthesis,    // it's an "("
+    RightParenthesis,    // it's an ")"
+};
+
+enum class ConditionType
+{
+    Invalid,
+    Equal,
+    Unequal,
+    LessThan,
+    GreaterThan,
+    LessThanOrEqual,
+    GreaterThanOrEqual,
+    InRange,
+    InList
+};
+
+class CCondition
+{
+private:
+    char dimension;
+    ConditionType condition;
+    int conditionConst;
+    int rangeStart, rangeEnd;
+    std::vector<int> list;
+public:
+    CCondition() : condition(ConditionType::Invalid) {};
+
+    char GetDimension() const { return this->dimension; }
+
+    bool Evaluate(int value) const;
+
+    void SetDimension(char d)
+    {
+        this->dimension = d;
+    }
+
+    void SetRange(int rangeStart, int rangeEnd)
+    {
+        this->condition = ConditionType::InRange;
+        this->rangeStart = rangeStart;
+        this->rangeEnd = rangeEnd;
+    }
+
+    void SetList(const std::vector<int>& list)
+    {
+        this->condition = ConditionType::InList;
+        this->list = list;
+    }
+
+    void SetRelationTypeAndConstant(ConditionType type, int constant)
+    {
+        this->condition = type;
+        this->conditionConst = constant;
+    }
+
+    void SetEqualTo(int equalConst)
+    {
+        this->condition = ConditionType::Equal;
+        this->conditionConst = equalConst;
+    }
+
+    void SetUnequalTo(int unequalConst)
+    {
+        this->condition = ConditionType::Unequal;
+        this->conditionConst = unequalConst;
+    }
+
+    void SetLessThan(int lessThanConst)
+    {
+        this->condition = ConditionType::LessThan;
+        this->conditionConst = lessThanConst;
+    }
+
+    void SetGreaterThan(int greaterThanConst)
+    {
+        this->condition = ConditionType::GreaterThan;
+        this->conditionConst = greaterThanConst;
+    }
+
+    void SetLessThanOrEqual(int lessThanOrEqualConst)
+    {
+        this->condition = ConditionType::LessThanOrEqual;
+        this->conditionConst = lessThanOrEqualConst;
+    }
+
+    void SetGreaterThanOrEqual(int greaterThanOrEqualConst)
+    {
+        this->condition = ConditionType::GreaterThanOrEqual;
+        this->conditionConst = greaterThanOrEqualConst;
+    }
+};
+
+class TokenItem
+{
+public:
+    TokenItem() : token(Token::Invalid) {};
+    Token token;
+    CCondition condition;
+    Operator op;
+};
+
 class IEvaluationData
 {
 public:
@@ -13,10 +130,10 @@ public:
 class CParserUtils
 {
 public:
-    static std::vector<libCZI::TokenItem> Tokenize(const std::string& str);
-    static std::vector <libCZI::TokenItem > ConvertToReversePolnish(const std::vector<libCZI::TokenItem>& src);
-    static bool CheckTokenList(const std::vector<libCZI::TokenItem>& tokens);
-    static bool Evaluate(const std::vector<libCZI::TokenItem>& tokens, const IEvaluationData* evaluateData);
+    static std::vector<TokenItem> Tokenize(const std::string& str);
+    static std::vector<TokenItem> ConvertToReversePolnish(const std::vector<TokenItem>& src);
+    static bool CheckTokenList(const std::vector<TokenItem>& tokens);
+    static bool Evaluate(const std::vector<TokenItem>& tokens, const IEvaluationData* evaluateData);
 private:
     static std::once_flag initRegex;
 
@@ -47,11 +164,11 @@ private:
 
     static const RegexInfo& GetRegex();
     static std::string GetRegexExpression(const std::string& possibleDimensions);
-    static void SetDimensionFromString(const std::string& str, libCZI::CCondition& condition);
+    static void SetDimensionFromString(const std::string& str, CCondition& condition);
     static std::vector<int> ParseListOfIntegers(const std::string& str);
-    static libCZI::ConditionType StringToConditionType(const std::string& str);
-    static bool IsOperatorPrecedenceHigher(libCZI::Operator a, libCZI::Operator b);
-    static bool EvaluateCondition(const libCZI::CCondition& cond, const IEvaluationData* evaluateData);
+    static ConditionType StringToConditionType(const std::string& str);
+    static bool IsOperatorPrecedenceHigher(Operator a, Operator b);
+    static bool EvaluateCondition(const CCondition& cond, const IEvaluationData* evaluateData);
 
     static RegexInfo regExInfo;
 };
