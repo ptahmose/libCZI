@@ -131,7 +131,7 @@ using namespace libCZI;
 
                     if (!isspace(c))
                     {
-                        if (n == offset)
+                        if (n == offset && c != '(' && c != ')' && ti.token != Token::RightParenthesis && ti.token != Token::LeftParenthesis)
                         {
                             throw LibCZIQueryParseException("Invalid Query-string", LibCZIQueryParseException::ErrorType::SyntaxError, offset);
                         }
@@ -155,8 +155,21 @@ using namespace libCZI;
     vector<TokenItem> output;
     stack<TokenItem> operatorStack;
 
+    bool mustBeLeftParenthesisOrConditionOrNot = false;
     for (const auto& ti : src)
     {
+        if (mustBeLeftParenthesisOrConditionOrNot)
+        {
+            if (ti.token != Token::LeftParenthesis &&
+                ti.token != Token::Condition &&
+                !(ti.token == Token::Operator && ti.op == Operator::NOT))
+            {
+                throw LibCZIQueryParseException("ill-formed expression", LibCZIQueryParseException::ErrorType::IllformedExpression);
+            }
+
+            mustBeLeftParenthesisOrConditionOrNot = false;
+        }
+
         switch (ti.token)
         {
         case Token::Condition:
@@ -173,6 +186,11 @@ using namespace libCZI;
                     output.push_back(operatorStack.top());
                     operatorStack.pop();
                 }
+            }
+            else
+            {
+                // "NOT" must be followed by either a left parenthesis, a condition or another "NOT"
+                mustBeLeftParenthesisOrConditionOrNot = true;
             }
 
             operatorStack.push(ti);
@@ -206,6 +224,11 @@ using namespace libCZI;
         }
     }
 
+    if (mustBeLeftParenthesisOrConditionOrNot)
+    {
+        throw LibCZIQueryParseException("ill-formed expression", LibCZIQueryParseException::ErrorType::IllformedExpression);
+    }
+
     for (; !operatorStack.empty();)
     {
         if (operatorStack.top().token == Token::LeftParenthesis || operatorStack.top().token == Token::RightParenthesis)
@@ -213,10 +236,10 @@ using namespace libCZI;
             throw LibCZIQueryParseException("Mismatched parenthesis encountered", LibCZIQueryParseException::ErrorType::UnbalancedParenthesis);
         }
 
-        if (operatorStack.top().token == Token::Operator && operatorStack.top().op == Operator::NOT)
-        {
-            throw LibCZIQueryParseException("Illformed statement", LibCZIQueryParseException::ErrorType::IllformedExpression);
-        }
+        //if (operatorStack.top().token == Token::Operator && operatorStack.top().op == Operator::NOT)
+        //{
+        //    throw LibCZIQueryParseException("Illformed statement", LibCZIQueryParseException::ErrorType::IllformedExpression);
+        //}
 
         output.push_back(operatorStack.top());
         operatorStack.pop();
@@ -274,6 +297,69 @@ using namespace libCZI;
     }
 
     return stackSize == 1;
+}
+
+/*static*/bool CParserUtils::Evaluate(const std::vector<TokenItem>& tokens, const IEvaluationData* evaluateData)
+{
+    stack<bool> evalStack;
+
+    for (const auto& t : tokens)
+    {
+        switch (t.token)
+        {
+        case Token::Condition:
+        {
+            bool b = EvaluateCondition(t.condition, evaluateData);
+            evalStack.push(b);
+            break;
+        }
+        case Token::Operator:
+            switch (t.op)
+            {
+            case Operator::AND:
+            {
+                //assert(evalStack.size() > 1);
+                bool b1 = evalStack.top();
+                evalStack.pop();
+                bool b2 = evalStack.top();
+                evalStack.pop();
+                evalStack.push(b1 & b2);
+                break;
+            }
+            case Operator::OR:
+            {
+                //assert(evalStack.size() > 1);
+                bool b1 = evalStack.top();
+                evalStack.pop();
+                bool b2 = evalStack.top();
+                evalStack.pop();
+                evalStack.push(b1 | b2);
+                break;
+            }
+            case Operator::XOR:
+            {
+                //assert(evalStack.size() > 1);
+                bool b1 = evalStack.top();
+                evalStack.pop();
+                bool b2 = evalStack.top();
+                evalStack.pop();
+                evalStack.push(b1 ^ b2);
+                break;
+            }
+            case Operator::NOT:
+            {
+                bool b = evalStack.top();
+                evalStack.pop();
+                evalStack.push(!b);
+                break;
+            }
+            }
+
+            break;
+        }
+    }
+
+    return evalStack.top();
 }
 
 /*static*/void CParserUtils::SetDimensionFromString(const std::string& str, CCondition& condition)
@@ -350,4 +436,38 @@ using namespace libCZI;
     }
 
     return false;
+}
+
+/*static*/bool CParserUtils::EvaluateCondition(const CCondition& cond, const IEvaluationData* evaluateData)
+{
+    int val = evaluateData->GetCoordinateValue(cond.GetDimension());
+    bool b = cond.Evaluate(val);
+    return b;
+}
+
+//-----------------------------------------------------------------------------
+
+bool CCondition::Evaluate(int value) const
+{
+    switch (this->condition)
+    {
+    case ConditionType::Equal:
+        return this->conditionConst == value;
+    case ConditionType::Unequal:
+        return this->conditionConst != value;
+    case ConditionType::LessThan:
+        return value < this->conditionConst;
+    case ConditionType::GreaterThan:
+        return value > this->conditionConst;
+    case ConditionType::LessThanOrEqual:
+        return value <= this->conditionConst;
+    case ConditionType::GreaterThanOrEqual:
+        return value >= this->conditionConst;
+    case ConditionType::InRange:
+        return value >= this->rangeStart && value <= this->rangeEnd;
+    case ConditionType::InList:
+        return find(this->list.cbegin(), this->list.cend(), value) != this->list.cend();
+    }
+
+    throw runtime_error("invalid condition");
 }

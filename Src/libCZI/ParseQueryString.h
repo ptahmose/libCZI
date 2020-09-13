@@ -4,12 +4,19 @@
 #include <mutex>  
 #include "libCZI.h"
 
+class IEvaluationData
+{
+public:
+    virtual int GetCoordinateValue(char dim) const = 0;
+};
+
 class CParserUtils
 {
 public:
     static std::vector<libCZI::TokenItem> Tokenize(const std::string& str);
     static std::vector <libCZI::TokenItem > ConvertToReversePolnish(const std::vector<libCZI::TokenItem>& src);
     static bool CheckTokenList(const std::vector<libCZI::TokenItem>& tokens);
+    static bool Evaluate(const std::vector<libCZI::TokenItem>& tokens, const IEvaluationData* evaluateData);
 private:
     static std::once_flag initRegex;
 
@@ -44,6 +51,7 @@ private:
     static std::vector<int> ParseListOfIntegers(const std::string& str);
     static libCZI::ConditionType StringToConditionType(const std::string& str);
     static bool IsOperatorPrecedenceHigher(libCZI::Operator a, libCZI::Operator b);
+    static bool EvaluateCondition(const libCZI::CCondition& cond, const IEvaluationData* evaluateData);
 
     static RegexInfo regExInfo;
 };
