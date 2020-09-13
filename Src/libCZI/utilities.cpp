@@ -296,3 +296,20 @@ tString trimImpl(const tString& str, const tString& whitespace)
 	Utilities::ConvertInt16ToHostByteOrder((int16_t*)&(p->Data3));
 #endif
 }
+
+/*static*/bool Utilities::TryParseInt32(const char* number, int* value)
+{
+	long long liValue = strtoll(number, nullptr, 10);
+
+	if (liValue > (std::numeric_limits<int>::max)() || liValue < (std::numeric_limits<int>::min)())
+	{
+		return false;
+	}
+
+	if (value != nullptr)
+	{
+		*value = static_cast<int>(liValue);
+	}
+
+	return true;
+}

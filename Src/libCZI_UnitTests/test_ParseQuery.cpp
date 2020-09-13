@@ -218,6 +218,102 @@ TEST(ParseQuery, Evaluate6)
     EXPECT_TRUE(exceptionOccurred);
 }
 
+TEST(ParseQuery, Evaluate7)
+{
+    auto tis = CParserUtils::Tokenize("  T=3 AND (Z=1 OR Z=2 OR Z=4)");
+    auto tirpn = CParserUtils::ConvertToReversePolnish(tis);
+
+    EvaluationDataAdapter evalData([](char dim)->int
+        {
+            switch (dim)
+            {
+            case 'T':return 3;
+            case 'Z':return 2;
+            default:
+                throw std::runtime_error("unexpected dimension");
+            }
+        });
+
+    bool r = CParserUtils::Evaluate(tirpn, &evalData);
+
+    EXPECT_EQ(r, true) << "Unexpected result";
+}
+
+TEST(ParseQuery, Evaluate8)
+{
+    auto tis = CParserUtils::Tokenize("  T=3 AND Z=1 OR Z=2 OR Z=4");
+    auto tirpn = CParserUtils::ConvertToReversePolnish(tis);
+
+    EvaluationDataAdapter evalData([](char dim)->int
+        {
+            switch (dim)
+            {
+            case 'T':return 6;
+            case 'Z':return 4;
+            default:
+                throw std::runtime_error("unexpected dimension");
+            }
+        });
+
+    bool r = CParserUtils::Evaluate(tirpn, &evalData);
+
+    EXPECT_EQ(r, true) << "Unexpected result";
+}
+
+TEST(ParseQuery, Evaluate9)
+{
+    auto tis = CParserUtils::Tokenize("  T=3 AND NOT(Z=1 OR Z=2 OR Z=4)");
+    auto tirpn = CParserUtils::ConvertToReversePolnish(tis);
+
+    EvaluationDataAdapter evalData([](char dim)->int
+        {
+            switch (dim)
+            {
+            case 'T':return 3;
+            case 'Z':return 4;
+            default:
+                throw std::runtime_error("unexpected dimension");
+            }
+        });
+
+    bool r = CParserUtils::Evaluate(tirpn, &evalData);
+
+    EXPECT_EQ(r, false) << "Unexpected result";
+}
+
+TEST(ParseQuery, Evaluate10)
+{
+    bool exceptionOccurred = false;
+    try
+    {
+        auto tis = CParserUtils::Tokenize("  T={2147483648}  ");
+    }
+    catch (LibCZIQueryParseException& ex)
+    {
+        EXPECT_EQ(ex.GetErrorType(), LibCZIQueryParseException::ErrorType::InvalidNumberFormat);
+        exceptionOccurred = true;
+    }
+
+    EXPECT_TRUE(exceptionOccurred);
+}
+
+TEST(ParseQuery, Evaluate11)
+{
+    bool exceptionOccurred = false;
+    try
+    {
+        auto tis = CParserUtils::Tokenize("  T=[-2147483649  , 0]");
+    }
+    catch (LibCZIQueryParseException& ex)
+    {
+        EXPECT_EQ(ex.GetErrorType(), LibCZIQueryParseException::ErrorType::InvalidNumberFormat);
+        exceptionOccurred = true;
+    }
+
+    EXPECT_TRUE(exceptionOccurred);
+}
+
+
 TEST(ParseQuery, EvaluateNot1)
 {
     auto tis = CParserUtils::Tokenize("  NOT   T=3   ");

@@ -1,6 +1,7 @@
 #include "ParseQueryString.h"
 #include <sstream>
 #include <stack>
+#include "utilities.h"
 
 using namespace std;
 using namespace libCZI;
@@ -90,8 +91,13 @@ using namespace libCZI;
                 }
                 else if (sm[regExInfo.indexRangeStatement].matched)
                 {
-                    int start = stoi(sm[regExInfo.indexRangeStart]);
-                    int end = stoi(sm[regExInfo.indexRangeEnd]);
+                    int start, end;
+                    if (!Utilities::TryParseInt32(sm[regExInfo.indexRangeStart],&start) ||
+                        !Utilities::TryParseInt32(sm[regExInfo.indexRangeEnd], &end))
+                    {
+                        throw LibCZIQueryParseException("Invalid Query-string", LibCZIQueryParseException::ErrorType::InvalidNumberFormat);
+                    }
+
                     ti.token = Token::Condition;
                     ti.condition.SetRange(start, end);
                     SetDimensionFromString(sm[regExInfo.indexRangeDimension], ti.condition);
@@ -372,6 +378,7 @@ using namespace libCZI;
 {
     vector<int> list;
     string number;
+    int value;
     for (size_t i = 0; i < str.length(); ++i)
     {
         if (isblank(str[i]))
@@ -381,8 +388,12 @@ using namespace libCZI;
 
         if (str[i] == ',')
         {
-            int i = stoi(number);
-            list.emplace_back(i);
+            if (!Utilities::TryParseInt32(number, &value))
+            {
+                throw LibCZIQueryParseException("Invalid number", LibCZIQueryParseException::ErrorType::InvalidNumberFormat);
+            }
+
+            list.emplace_back(value);
             number.clear();
         }
         else
@@ -391,8 +402,12 @@ using namespace libCZI;
         }
     }
 
-    int i = stoi(number);
-    list.emplace_back(i);
+    if (!Utilities::TryParseInt32(number, &value))
+    {
+        throw LibCZIQueryParseException("Invalid number", LibCZIQueryParseException::ErrorType::InvalidNumberFormat);
+    }
+
+    list.emplace_back(value);
     return list;
 }
 

@@ -252,6 +252,7 @@ namespace libCZI
 			SyntaxError,
 			UnbalancedParenthesis,
 			IllformedExpression,
+			InvalidNumberFormat
 		};
 	private:
 		ErrorType errorType;

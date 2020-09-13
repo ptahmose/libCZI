@@ -144,6 +144,9 @@ public:
 	static void ConvertGuidToHostByteOrder(GUID* p);
 
 	static bool TryGetRgb8ColorFromString(const std::wstring& strXml, libCZI::Rgb8Color& color);
+
+	static bool TryParseInt32(const char* number, int* value);
+	static bool TryParseInt32(const std::string number, int* value) { return Utilities::TryParseInt32(number.c_str(), value); }
 };
 
 template <typename t>

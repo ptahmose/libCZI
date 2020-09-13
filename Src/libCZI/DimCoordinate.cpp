@@ -24,6 +24,7 @@
 #include "libCZI.h"
 #include <climits>
 #include <regex>
+#include "utilities.h"
 
 using namespace libCZI;
 using namespace std;
@@ -62,10 +63,6 @@ public:
 	static CDimBounds ParseBounds(const char* str)
 	{
 		string s(str);
-		//string s("k5:41 T9:4  ");
-		//string s("k5:41 T9:4 fdsd");
-		//regex bounds_regex(R"(([a-zA-Z])(([+|-]?[0-9]+):([+|-]?[0-9]+))*)");
-		//regex bounds_regex(R"(([a-zA-Z])(([\+|-]?[0-9]+):([\+|-]?[0-9]+)))");
 		regex bounds_regex(R"((?:([a-zA-Z])(?:([\+|-]?[0-9]+):([\+|-]?[0-9]+))\s*))");
 
 		std::regex_iterator<std::string::iterator> it(s.begin(), s.end(), bounds_regex);
@@ -87,13 +84,13 @@ public:
 
 				int startIdx, sizeIdx;
 				auto startIdxMatch = it->operator[](2);
-				if (!TryParseInt(startIdxMatch.str().c_str(), &startIdx))
+				if (!Utilities::TryParseInt32(startIdxMatch.str().c_str(), &startIdx))
 				{
 					throw LibCZIStringParseException("Invalid start-index", -1, LibCZIStringParseException::ErrorType::InvalidSyntax);
 				}
 
 				auto sizeIdxMatch = it->operator[](3);
-				if (!TryParseInt(sizeIdxMatch.str().c_str(), &sizeIdx) || sizeIdx == 0)
+				if (!Utilities::TryParseInt32(sizeIdxMatch.str().c_str(), &sizeIdx) || sizeIdx == 0)
 				{
 					throw LibCZIStringParseException("Invalid end-index", -1, LibCZIStringParseException::ErrorType::InvalidSyntax);
 				}
@@ -249,26 +246,9 @@ private:
 			return false;
 		}
 
-		if (!TryParseInt(number, &value))
+		if (!Utilities::TryParseInt32(number, &value))
 		{
 			return false;
-		}
-
-		return true;
-	}
-
-	static bool TryParseInt(const char* number, int* value)
-	{
-		long long liValue = strtoll(number, nullptr, 10);
-
-		if (liValue > (std::numeric_limits<int>::max)() || liValue < (std::numeric_limits<int>::min)())
-		{
-			return false;
-		}
-
-		if (value != nullptr)
-		{
-			*value = static_cast<int>(liValue);
 		}
 
 		return true;
@@ -279,24 +259,6 @@ private:
 {
 	int parsedChars;
 	return CIntParseCoordinateBoundsString::ParseCoordinate(str, parsedChars);
-	/*
-	regex coord_regex("([:blank:]*[Z|C|T|R|S|I|H|V|B][\\+|-]?[[:digit:]]+[,|;| ]*)", regex_constants::icase);
-
-	CDimCoordinate dim;
-	regex_iterator<const char*> itr(str, str + strlen(str), coord_regex);
-	regex_iterator<const char*> itr_end;
-	while (itr != itr_end)
-	{
-		auto match = *itr;
-		auto ms = match.str();
-		DimensionIndex dimIndex = Utils::CharToDimension(ms[0]);
-		int index = atoi(ms.c_str() + 1);
-		dim.Set(dimIndex, index);
-		++itr;
-	}
-
-	return dim;
-	*/
 }
 
 /*static*/CDimBounds CDimBounds::Parse(const char* str)
