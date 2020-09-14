@@ -39,7 +39,7 @@ enum class ConditionType
 class CCondition
 {
 private:
-    char dimension;
+    libCZI::DimensionIndex dimension;
     ConditionType condition;
     int conditionConst;
     int rangeStart, rangeEnd;
@@ -47,11 +47,11 @@ private:
 public:
     CCondition() : condition(ConditionType::Invalid) {};
 
-    char GetDimension() const { return this->dimension; }
+    libCZI::DimensionIndex GetDimension() const { return this->dimension; }
 
     bool Evaluate(int value) const;
 
-    void SetDimension(char d)
+    void SetDimension(libCZI::DimensionIndex d)
     {
         this->dimension = d;
     }
@@ -124,7 +124,7 @@ public:
 class IEvaluationData
 {
 public:
-    virtual int GetCoordinateValue(char dim) const = 0;
+    virtual int GetCoordinateValue(libCZI::DimensionIndex dim) const = 0;
 };
 
 class CParserUtils

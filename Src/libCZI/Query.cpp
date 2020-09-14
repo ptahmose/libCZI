@@ -25,9 +25,12 @@ public:
         this->infoRef = &info;
     }
 
-    virtual int GetCoordinateValue(char dim) const
+    virtual int GetCoordinateValue(DimensionIndex dim) const
     {
-        return -1;
+        int value = std::numeric_limits<int>::min();
+        bool b = this->infoRef->coordinate.TryGetPosition(dim, &value);
+        // TODO: how to deal with "false" here?
+        return value;
     }
 };
 
@@ -57,4 +60,24 @@ public:
 
             return true;
         });
+}
+
+/*static*/std::vector<int> CQueryParser::GetSubBlocksMatching(ISubBlockRepository* sbRepository, const std::shared_ptr<IQueryCondition>& condition, int maxResults)
+{
+    std::vector<int> list;
+    CQueryParser::EnumSubset(
+        sbRepository,
+        condition,
+        [&](int idx, const SubBlockInfo& info)->bool
+        {
+            list.push_back(idx);
+            if (maxResults > 0 && list.size() > maxResults)
+            {
+                return false;
+            }
+
+            return true;
+        });
+
+    return list;
 }

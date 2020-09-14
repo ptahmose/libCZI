@@ -371,7 +371,8 @@ using namespace libCZI;
 /*static*/void CParserUtils::SetDimensionFromString(const std::string& str, CCondition& condition)
 {
     auto d = str[0];
-    condition.SetDimension(d);
+    auto dim = Utils::CharToDimension(d);
+    condition.SetDimension(dim);
 }
 
 /*static*/std::vector<int> CParserUtils::ParseListOfIntegers(const std::string& str)
