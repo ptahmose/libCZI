@@ -45,7 +45,16 @@ public:
 
 /*static*/void CQueryParser::EnumSubset(ISubBlockRepository* sbRepository, const std::shared_ptr<IQueryCondition>& condition, std::function<bool(int index, const SubBlockInfo& info)> funcEnum)
 {
-    auto queryCondition = static_pointer_cast<CQueryCondition>(condition);
+    CQueryParser::EnumSubset(sbRepository, condition.get(), funcEnum);
+}
+
+/*static*/void CQueryParser::EnumSubset(ISubBlockRepository* sbRepository, const IQueryCondition* condition, std::function<bool(int index, const SubBlockInfo& info)> funcEnum)
+{
+    auto queryCondition = dynamic_cast<const CQueryCondition*>(condition);
+    if (queryCondition == nullptr)
+    {
+        throw invalid_argument("The query-condition argument is invalid.");
+    }
 
     CEvaluationWrapper wrapper;
     sbRepository->EnumerateSubBlocks(
