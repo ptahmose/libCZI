@@ -43,12 +43,12 @@ public:
     return r;
 }
 
-/*static*/void CQueryParser::EnumSubset(ISubBlockRepository* sbRepository, const std::shared_ptr<IQueryCondition>& condition, std::function<bool(int index, const SubBlockInfo& info)> funcEnum)
+/*static*/void CQueryParser::EnumSubset(ISubBlockRepository* sbRepository, const std::shared_ptr<IQueryCondition>& condition, const std::function<bool(int index, const SubBlockInfo& info)>& funcEnum)
 {
     CQueryParser::EnumSubset(sbRepository, condition.get(), funcEnum);
 }
 
-/*static*/void CQueryParser::EnumSubset(ISubBlockRepository* sbRepository, const IQueryCondition* condition, std::function<bool(int index, const SubBlockInfo& info)> funcEnum)
+/*static*/void CQueryParser::EnumSubset(ISubBlockRepository* sbRepository, const IQueryCondition* condition, const std::function<bool(int index, const SubBlockInfo& info)>& funcEnum)
 {
     auto queryCondition = dynamic_cast<const CQueryCondition*>(condition);
     if (queryCondition == nullptr)
@@ -72,6 +72,11 @@ public:
 }
 
 /*static*/std::vector<int> CQueryParser::GetSubBlocksMatching(ISubBlockRepository* sbRepository, const std::shared_ptr<IQueryCondition>& condition, int maxResults)
+{
+    return CQueryParser::GetSubBlocksMatching(sbRepository, condition.get(), maxResults);
+}
+
+/*static*/std::vector<int> CQueryParser::GetSubBlocksMatching(ISubBlockRepository* sbRepository, const IQueryCondition* condition, int maxResults)
 {
     std::vector<int> list;
     CQueryParser::EnumSubset(

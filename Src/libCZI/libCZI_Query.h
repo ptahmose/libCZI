@@ -134,8 +134,8 @@ namespace libCZI
   public:
     static std::shared_ptr<IQueryCondition> ParseQueryString(const std::string& str);
 
-    static void EnumSubset(ISubBlockRepository* sbRepository, const std::shared_ptr<IQueryCondition>& condition, std::function<bool(int index, const SubBlockInfo& info)> funcEnum);
-    static void EnumSubset(ISubBlockRepository* sbRepository, const IQueryCondition* condition, std::function<bool(int index, const SubBlockInfo& info)> funcEnum);
+    static void EnumSubset(ISubBlockRepository* sbRepository, const std::shared_ptr<IQueryCondition>& condition, const std::function<bool(int index, const SubBlockInfo& info)>& funcEnum);
+    static void EnumSubset(ISubBlockRepository* sbRepository, const IQueryCondition* condition, const std::function<bool(int index, const SubBlockInfo& info)>& funcEnum);
 
     static std::vector<int> GetSubBlocksMatching(ISubBlockRepository* sbRepository, const std::shared_ptr<IQueryCondition>& condition, int maxResults);
     static std::vector<int> GetSubBlocksMatching(ISubBlockRepository* sbRepository, const IQueryCondition* condition, int maxResults);
