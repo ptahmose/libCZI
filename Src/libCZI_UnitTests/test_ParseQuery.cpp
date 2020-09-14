@@ -474,6 +474,7 @@ TEST(ParseQuery, QueryParser2Test)
     int count2 = 0;
     int count3 = 0;
     int count4 = 0;
+    int count5 = 0;
     for (int z = 0; z < 10; ++z)
     {
         for (int t = 0; t < 10; ++t)
@@ -487,6 +488,7 @@ TEST(ParseQuery, QueryParser2Test)
             if (z > 4 || t > 4) ++count2;
             if (!(z > 4 || t > 4)) ++count3;
             if ((!(z > 4)) || t > 4) ++count4;
+            if ((z > 4) ^ (t > 4)) ++count5;
         }
     }
 
@@ -501,4 +503,7 @@ TEST(ParseQuery, QueryParser2Test)
 
     list = CQueryParser::GetSubBlocksMatching(&sbRepoMock, CQueryParser::ParseQueryString("(NOT Z > 4) OR T > 4"), -1);
     EXPECT_EQ(list.size(), count4);
+
+    list = CQueryParser::GetSubBlocksMatching(&sbRepoMock, CQueryParser::ParseQueryString("Z > 4 XOR T>4"), -1);
+    EXPECT_EQ(list.size(), count5);
 }
