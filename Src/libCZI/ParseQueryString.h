@@ -36,16 +36,29 @@ enum class ConditionType
     InList
 };
 
+enum class VariableType
+{
+    None,
+    Dimension,
+    PhysicalWidth,
+    PhysicalHeight,
+    LogicalPositionX,
+    LogicalPositionY,
+    LogicalPositionWidth,
+    LogicalPositionHeight
+};
+
 class CCondition
 {
 private:
+    VariableType varType;
     libCZI::DimensionIndex dimension;
     ConditionType condition;
     int conditionConst;
     int rangeStart, rangeEnd;
     std::vector<int> list;
 public:
-    CCondition() : condition(ConditionType::Invalid) {};
+    CCondition() : condition(ConditionType::Invalid), varType(VariableType::None) {};
 
     libCZI::DimensionIndex GetDimension() const { return this->dimension; }
 
@@ -53,7 +66,18 @@ public:
 
     void SetDimension(libCZI::DimensionIndex d)
     {
+        this->varType = VariableType::Dimension;
         this->dimension = d;
+    }
+
+    void SetVariableType(VariableType type)
+    {
+        this->varType = type;
+    }
+
+    VariableType GetVariableType() const
+    {
+        return this->varType;
     }
 
     void SetRange(int rangeStart, int rangeEnd)
@@ -125,6 +149,7 @@ class IEvaluationData
 {
 public:
     virtual int GetCoordinateValue(libCZI::DimensionIndex dim) const = 0;
+    virtual int GetVariable(VariableType type) const = 0;
 };
 
 class CParserUtils
@@ -135,6 +160,13 @@ public:
     static bool CheckTokenList(const std::vector<TokenItem>& tokens);
     static bool Evaluate(const std::vector<TokenItem>& tokens, const IEvaluationData* evaluateData);
 private:
+    static const char* VariableName_PhysicalWidth;
+    static const char* VariableName_PhysicalHeight;
+    static const char* VariableName_LogicalPosX;
+    static const char* VariableName_LogicalPosY;
+    static const char* VariableName_LogicalPosWidth;
+    static const char* VariableName_LogicalPosHeight;
+
     static std::once_flag initRegex;
 
     struct RegexInfo
@@ -164,7 +196,7 @@ private:
 
     static const RegexInfo& GetRegex();
     static std::string GetRegexExpression(const std::string& possibleDimensions);
-    static void SetDimensionFromString(const std::string& str, CCondition& condition);
+    static void SetVariableFromString(const std::string& str, CCondition& condition);
     static std::vector<int> ParseListOfIntegers(const std::string& str);
     static ConditionType StringToConditionType(const std::string& str);
     static bool IsOperatorPrecedenceHigher(Operator a, Operator b);

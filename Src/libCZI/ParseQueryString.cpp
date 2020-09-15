@@ -9,6 +9,13 @@ using namespace libCZI;
 /*static*/std::once_flag CParserUtils::initRegex;
 /*static*/CParserUtils::RegexInfo CParserUtils::regExInfo;
 
+/*static*/const char* CParserUtils::VariableName_PhysicalWidth = "Width";
+/*static*/const char* CParserUtils::VariableName_PhysicalHeight = "Height";
+/*static*/const char* CParserUtils::VariableName_LogicalPosX = "LogPosX";
+/*static*/const char* CParserUtils::VariableName_LogicalPosY = "LogPosY";
+/*static*/const char* CParserUtils::VariableName_LogicalPosWidth = "LogPosWidth";
+/*static*/const char* CParserUtils::VariableName_LogicalPosHeight = "LogPosHeight";
+
 /*static*/string CParserUtils::GetRegexExpression(const std::string& possibleDimensions)
 {
     static const string regexTequals = "[[:blank:]]*(=|>|<|<=|>=|!=)[[:blank:]]*([+-]?[[:digit:]]+)";
@@ -16,9 +23,20 @@ using namespace libCZI;
     static const string regexTlist = "[[:blank:]]*=[[:blank:]]*\\{([[:blank:]]*[+-]?[[:digit:]]+[[:blank:]]*(?:,[[:blank:]]*[+-]?[[:digit:]]+[[:blank:]]*)*)\\}";
 
     stringstream ss;
-    ss << "^[[:blank:]]*(AND|OR|XOR|NOT|\\(|\\)|" << "(([" << possibleDimensions << "])" << regexTequals << ")|(([" << possibleDimensions << "])" << regexTrange << ")|(([" << possibleDimensions << "])" << regexTlist << "))";
+    ss << "(?:";
+    for (char c : possibleDimensions)
+    {
+        ss << c << '|';
+    }
 
-    return ss.str();
+    ss << VariableName_PhysicalWidth << '|' << VariableName_PhysicalHeight << '|';
+    ss << VariableName_LogicalPosX << '|' << VariableName_LogicalPosY << '|' << VariableName_LogicalPosWidth << '|' << VariableName_LogicalPosHeight;
+    ss << ')';
+
+    stringstream ssRegex;
+    ssRegex << "^[[:blank:]]*(AND|OR|XOR|NOT|\\(|\\)|" << "((" << ss.str() << ")" << regexTequals << ")|((" << ss.str() << ")" << regexTrange << ")|((" << ss.str() << ")" << regexTlist << "))";
+
+    return ssRegex.str();
 }
 
 /*static*/const CParserUtils::RegexInfo& CParserUtils::GetRegex()
@@ -92,7 +110,7 @@ using namespace libCZI;
                 else if (sm[regExInfo.indexRangeStatement].matched)
                 {
                     int start, end;
-                    if (!Utilities::TryParseInt32(sm[regExInfo.indexRangeStart],&start) ||
+                    if (!Utilities::TryParseInt32(sm[regExInfo.indexRangeStart], &start) ||
                         !Utilities::TryParseInt32(sm[regExInfo.indexRangeEnd], &end))
                     {
                         throw LibCZIQueryParseException("Invalid Query-string", LibCZIQueryParseException::ErrorType::InvalidNumberFormat);
@@ -100,13 +118,13 @@ using namespace libCZI;
 
                     ti.token = Token::Condition;
                     ti.condition.SetRange(start, end);
-                    SetDimensionFromString(sm[regExInfo.indexRangeDimension], ti.condition);
+                    SetVariableFromString(sm[regExInfo.indexRangeDimension], ti.condition);
                 }
                 else if (sm[regExInfo.indexListStatement].matched)
                 {
                     ti.token = Token::Condition;
                     ti.condition.SetList(ParseListOfIntegers(sm[regExInfo.indexListNumberList]));
-                    SetDimensionFromString(sm[regExInfo.indexListDimension], ti.condition);
+                    SetVariableFromString(sm[regExInfo.indexListDimension], ti.condition);
                 }
                 else if (sm[regExInfo.indexRelationStatement].matched)
                 {
@@ -114,7 +132,7 @@ using namespace libCZI;
                     auto relationType = StringToConditionType(sm[regExInfo.indexRelationOp]);
                     int constant = stoi(sm[regExInfo.indexRelationConstant]);
                     ti.condition.SetRelationTypeAndConstant(relationType, constant);
-                    SetDimensionFromString(sm[regExInfo.indexRelationDimension], ti.condition);
+                    SetVariableFromString(sm[regExInfo.indexRelationDimension], ti.condition);
                 }
 
                 if (ti.token == Token::Invalid)
@@ -251,7 +269,7 @@ using namespace libCZI;
         operatorStack.pop();
     }
 
-    bool isWellFormed = CParserUtils::CheckTokenList(output);
+    const bool isWellFormed = CParserUtils::CheckTokenList(output);
     if (!isWellFormed)
     {
         throw LibCZIQueryParseException("ill-formed expression", LibCZIQueryParseException::ErrorType::IllformedExpression);
@@ -368,8 +386,31 @@ using namespace libCZI;
     return evalStack.top();
 }
 
-/*static*/void CParserUtils::SetDimensionFromString(const std::string& str, CCondition& condition)
+/*static*/void CParserUtils::SetVariableFromString(const std::string& str, CCondition& condition)
 {
+    static const struct
+    {
+        const char* variableName;
+        VariableType type;
+    } table[] =
+    {
+        {VariableName_PhysicalWidth, VariableType::PhysicalWidth},
+        {VariableName_PhysicalHeight, VariableType::PhysicalHeight},
+        {VariableName_LogicalPosX, VariableType::LogicalPositionX},
+        {VariableName_LogicalPosY, VariableType::LogicalPositionY},
+        {VariableName_LogicalPosWidth, VariableType::LogicalPositionWidth},
+        {VariableName_LogicalPosHeight, VariableType::LogicalPositionHeight}
+    };
+
+    for (auto i : table)
+    {
+        if (strcmp(i.variableName, str.c_str()) == 0)
+        {
+            condition.SetVariableType(i.type);
+            return;
+        }
+    }
+
     auto d = str[0];
     auto dim = Utils::CharToDimension(d);
     condition.SetDimension(dim);
@@ -456,7 +497,22 @@ using namespace libCZI;
 
 /*static*/bool CParserUtils::EvaluateCondition(const CCondition& cond, const IEvaluationData* evaluateData)
 {
-    int val = evaluateData->GetCoordinateValue(cond.GetDimension());
+    auto type = cond.GetVariableType();
+    int val = -1;
+    switch (type)
+    {
+    case VariableType::PhysicalWidth:
+    case VariableType::PhysicalHeight:
+    case VariableType::LogicalPositionX:
+    case VariableType::LogicalPositionY:
+    case VariableType::LogicalPositionWidth:
+    case VariableType::LogicalPositionHeight:
+        val = evaluateData->GetVariable(type);
+        break;
+    case VariableType::Dimension:
+        val = evaluateData->GetCoordinateValue(cond.GetDimension());
+        break;
+    }
     bool b = cond.Evaluate(val);
     return b;
 }

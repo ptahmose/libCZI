@@ -32,6 +32,27 @@ public:
         // TODO: how to deal with "false" here?
         return value;
     }
+
+    virtual int GetVariable(VariableType type) const
+    {
+        switch (type)
+        {
+        case VariableType::PhysicalWidth:
+            return this->infoRef->physicalSize.w;
+        case VariableType::PhysicalHeight:
+            return this->infoRef->physicalSize.h;
+        case VariableType::LogicalPositionX:
+            return this->infoRef->logicalRect.x;
+        case VariableType::LogicalPositionY:
+            return this->infoRef->logicalRect.y;
+        case VariableType::LogicalPositionWidth:
+            return this->infoRef->logicalRect.w;
+        case VariableType::LogicalPositionHeight:
+            return this->infoRef->logicalRect.h;
+        default:
+            throw runtime_error("illegal type");
+        }
+    }
 };
 
 /*static*/std::shared_ptr<libCZI::IQueryCondition> CQueryParser::ParseQueryString(const std::string& str)
@@ -50,7 +71,7 @@ public:
 
 /*static*/void CQueryParser::EnumSubset(ISubBlockRepository* sbRepository, const IQueryCondition* condition, const std::function<bool(int index, const SubBlockInfo& info)>& funcEnum)
 {
-    auto queryCondition = dynamic_cast<const CQueryCondition*>(condition);
+    const auto* queryCondition = dynamic_cast<const CQueryCondition*>(condition);
     if (queryCondition == nullptr)
     {
         throw invalid_argument("The query-condition argument is invalid.");

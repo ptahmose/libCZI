@@ -19,6 +19,11 @@ public:
     {
         return func(dim);
     }
+
+    virtual int GetVariable(VariableType type) const
+    {
+        throw runtime_error("not implemented");
+    }
 };
 
 TEST(ParseQuery, Tokenize1)
@@ -506,4 +511,23 @@ TEST(ParseQuery, QueryParser2Test)
 
     list = CQueryParser::GetSubBlocksMatching(&sbRepoMock, CQueryParser::ParseQueryString("Z > 4 XOR T>4"), -1);
     EXPECT_EQ(list.size(), count5);
+}
+
+TEST(ParseQuery, QueryParserWidthVariableTest)
+{
+    CSubBlockRepositoryMock sbRepoMock;
+    for (int z = 0; z < 50; ++z)
+    {
+        SubBlockInfo sbInfo;
+        sbInfo.physicalSize.w = 10 * (z + 1);
+        sbInfo.physicalSize.h = 10 * (z + 1);
+        sbInfo.coordinate.Set(DimensionIndex::Z, z);
+        sbRepoMock.AddSubBlock(sbInfo);
+    }
+
+    auto list = CQueryParser::GetSubBlocksMatching(&sbRepoMock, CQueryParser::ParseQueryString("Width > 480"), -1);
+
+    EXPECT_EQ(list.size(), 2);
+    EXPECT_EQ(list[0], 48);
+    EXPECT_EQ(list[1], 49);
 }
