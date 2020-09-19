@@ -204,6 +204,7 @@ private:
     static ConditionType StringToConditionType(const std::string& str);
     static bool IsOperatorPrecedenceHigher(Operator a, Operator b);
     static bool EvaluateCondition(const CCondition& cond, const IEvaluationData* evaluateData);
+    static std::string GetAllPossibleDimensions();
 
     static RegexInfo regExInfo;
 };

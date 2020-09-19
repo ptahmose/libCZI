@@ -44,7 +44,7 @@ using namespace libCZI;
     std::call_once(CParserUtils::initRegex,
         []()
         {
-            CParserUtils::regExInfo.regEx = regex(CParserUtils::GetRegexExpression("TZCR"));
+            CParserUtils::regExInfo.regEx = regex(CParserUtils::GetRegexExpression(CParserUtils::GetAllPossibleDimensions()));
             CParserUtils::regExInfo.indexRelationStatement = 2;
             CParserUtils::regExInfo.indexRelationDimension = 3;
             CParserUtils::regExInfo.indexRelationOp = 4;
@@ -61,6 +61,20 @@ using namespace libCZI;
         });
 
     return CParserUtils::regExInfo;
+}
+
+/*static*/ std::string CParserUtils::GetAllPossibleDimensions()
+{
+    string str;
+    str.reserve(10);
+    for (underlying_type<DimensionIndex>::type i = (underlying_type<DimensionIndex>::type)DimensionIndex::MinDim;
+        i <= (underlying_type<DimensionIndex>::type)DimensionIndex::MaxDim;
+        ++i)
+    {
+        str += Utils::DimensionToChar((DimensionIndex)i);
+    }
+
+    return str;
 }
 
 /*static*/std::vector<TokenItem> CParserUtils::Tokenize(const std::string& str)
@@ -259,11 +273,6 @@ using namespace libCZI;
         {
             throw LibCZIQueryParseException("Mismatched parenthesis encountered", LibCZIQueryParseException::ErrorType::UnbalancedParenthesis);
         }
-
-        //if (operatorStack.top().token == Token::Operator && operatorStack.top().op == Operator::NOT)
-        //{
-        //    throw LibCZIQueryParseException("Illformed statement", LibCZIQueryParseException::ErrorType::IllformedExpression);
-        //}
 
         output.push_back(operatorStack.top());
         operatorStack.pop();
