@@ -6,6 +6,7 @@
 
 enum class Operator : std::uint8_t
 {
+    INVALID = 0,
     AND = 1,
     OR = 2,
     XOR = 3,
@@ -36,18 +37,20 @@ enum class ConditionType
     InList
 };
 
+/// Values that represent the type of the variable in a condition.
 enum class VariableType
 {
     None,
-    Dimension,
-    PhysicalWidth,
-    PhysicalHeight,
-    LogicalPositionX,
-    LogicalPositionY,
-    LogicalPositionWidth,
-    LogicalPositionHeight
+    Dimension,              ///< An enum constant representing that the variable is a dimension of a coordinate.
+    PhysicalWidth,          ///< An enum constant representing that the variable is the physical width of the subblock.
+    PhysicalHeight,         ///< An enum constant representing that the variable is the physical height of the subblock.
+    LogicalPositionX,       ///< An enum constant representing that the variable is the x-position of the subblock's physical position.
+    LogicalPositionY,       ///< An enum constant representing that the variable is the y-position of the subblock's physical position.
+    LogicalPositionWidth,   ///< An enum constant representing that the variable is the width of the subblock's physical position.
+    LogicalPositionHeight   ///< An enum constant representing that the variable is the height of the subblock's physical position.
 };
 
+/// This class contains all information in order to represent a condition.
 class CCondition
 {
 private:
@@ -139,7 +142,7 @@ public:
 class TokenItem
 {
 public:
-    TokenItem() : token(Token::Invalid) {};
+    TokenItem() : token(Token::Invalid), op(Operator::INVALID) {};
     Token token;
     CCondition condition;
     Operator op;

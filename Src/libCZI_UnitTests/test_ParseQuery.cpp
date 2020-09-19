@@ -513,7 +513,7 @@ TEST(ParseQuery, QueryParser2Test)
     EXPECT_EQ(list.size(), count5);
 }
 
-TEST(ParseQuery, QueryParserWidthVariableTest)
+TEST(ParseQuery, QueryParserWidthVariable1Test)
 {
     CSubBlockRepositoryMock sbRepoMock;
     for (int z = 0; z < 50; ++z)
@@ -530,4 +530,157 @@ TEST(ParseQuery, QueryParserWidthVariableTest)
     EXPECT_EQ(list.size(), 2);
     EXPECT_EQ(list[0], 48);
     EXPECT_EQ(list[1], 49);
+
+    list = CQueryParser::GetSubBlocksMatching(&sbRepoMock, CQueryParser::ParseQueryString("Width >= 480"), -1);
+
+    EXPECT_EQ(list.size(), 3);
+    EXPECT_EQ(list[0], 47);
+    EXPECT_EQ(list[1], 48);
+    EXPECT_EQ(list[2], 49);
+} 
+
+TEST(ParseQuery, QueryParserHeightVariable1Test)
+{
+    CSubBlockRepositoryMock sbRepoMock;
+    for (int z = 0; z < 50; ++z)
+    {
+        SubBlockInfo sbInfo;
+        sbInfo.physicalSize.w = 10 * (z + 1);
+        sbInfo.physicalSize.h = 10 * (z + 1);
+        sbInfo.coordinate.Set(DimensionIndex::Z, z);
+        sbRepoMock.AddSubBlock(sbInfo);
+    }
+
+    auto list = CQueryParser::GetSubBlocksMatching(&sbRepoMock, CQueryParser::ParseQueryString("Height > 480"), -1);
+
+    EXPECT_EQ(list.size(), 2);
+    EXPECT_EQ(list[0], 48);
+    EXPECT_EQ(list[1], 49);
+
+    list = CQueryParser::GetSubBlocksMatching(&sbRepoMock, CQueryParser::ParseQueryString("Height >= 480"), -1);
+
+    EXPECT_EQ(list.size(), 3);
+    EXPECT_EQ(list[0], 47);
+    EXPECT_EQ(list[1], 48);
+    EXPECT_EQ(list[2], 49);
+}
+
+TEST(ParseQuery, QueryParserLogPosXVariable1Test)
+{
+    CSubBlockRepositoryMock sbRepoMock;
+    for (int z = 0; z < 50; ++z)
+    {
+        SubBlockInfo sbInfo;
+        sbInfo.physicalSize.w = 10 * (z + 1);
+        sbInfo.physicalSize.h = 10 * (z + 1);
+        sbInfo.logicalRect.x = 1 * (z + 1);
+        sbInfo.logicalRect.y = 10 * (z + 1);
+        sbInfo.logicalRect.w = 100 * (z + 1);
+        sbInfo.logicalRect.h = 1000 * (z + 1);
+        sbInfo.coordinate.Set(DimensionIndex::Z, z);
+        sbRepoMock.AddSubBlock(sbInfo);
+    }
+
+    auto list = CQueryParser::GetSubBlocksMatching(&sbRepoMock, CQueryParser::ParseQueryString("LogPosX > 48"), -1);
+
+    EXPECT_EQ(list.size(), 2);
+    EXPECT_EQ(list[0], 48);
+    EXPECT_EQ(list[1], 49);
+
+    list = CQueryParser::GetSubBlocksMatching(&sbRepoMock, CQueryParser::ParseQueryString("LogPosX >= 48"), -1);
+
+    EXPECT_EQ(list.size(), 3);
+    EXPECT_EQ(list[0], 47);
+    EXPECT_EQ(list[1], 48);
+    EXPECT_EQ(list[2], 49);
+}
+
+TEST(ParseQuery, QueryParserLogPosYVariable1Test)
+{
+    CSubBlockRepositoryMock sbRepoMock;
+    for (int z = 0; z < 50; ++z)
+    {
+        SubBlockInfo sbInfo;
+        sbInfo.physicalSize.w = 10 * (z + 1);
+        sbInfo.physicalSize.h = 10 * (z + 1);
+        sbInfo.logicalRect.x = 1 * (z + 1);
+        sbInfo.logicalRect.y = 10 * (z + 1);
+        sbInfo.logicalRect.w = 100 * (z + 1);
+        sbInfo.logicalRect.h = 1000 * (z + 1);
+        sbInfo.coordinate.Set(DimensionIndex::Z, z);
+        sbRepoMock.AddSubBlock(sbInfo);
+    }
+
+    auto list = CQueryParser::GetSubBlocksMatching(&sbRepoMock, CQueryParser::ParseQueryString("LogPosY > 480"), -1);
+
+    EXPECT_EQ(list.size(), 2);
+    EXPECT_EQ(list[0], 48);
+    EXPECT_EQ(list[1], 49);
+
+    list = CQueryParser::GetSubBlocksMatching(&sbRepoMock, CQueryParser::ParseQueryString("LogPosY >= 480"), -1);
+
+    EXPECT_EQ(list.size(), 3);
+    EXPECT_EQ(list[0], 47);
+    EXPECT_EQ(list[1], 48);
+    EXPECT_EQ(list[2], 49);
+}
+
+TEST(ParseQuery, QueryParserLogPosWVariable1Test)
+{
+    CSubBlockRepositoryMock sbRepoMock;
+    for (int z = 0; z < 50; ++z)
+    {
+        SubBlockInfo sbInfo;
+        sbInfo.physicalSize.w = 10 * (z + 1);
+        sbInfo.physicalSize.h = 10 * (z + 1);
+        sbInfo.logicalRect.x = 1 * (z + 1);
+        sbInfo.logicalRect.y = 10 * (z + 1);
+        sbInfo.logicalRect.w = 100 * (z + 1);
+        sbInfo.logicalRect.h = 1000 * (z + 1);
+        sbInfo.coordinate.Set(DimensionIndex::Z, z);
+        sbRepoMock.AddSubBlock(sbInfo);
+    }
+
+    auto list = CQueryParser::GetSubBlocksMatching(&sbRepoMock, CQueryParser::ParseQueryString("LogPosWidth > 4800"), -1);
+
+    EXPECT_EQ(list.size(), 2);
+    EXPECT_EQ(list[0], 48);
+    EXPECT_EQ(list[1], 49);
+
+    list = CQueryParser::GetSubBlocksMatching(&sbRepoMock, CQueryParser::ParseQueryString("LogPosWidth >= 4800"), -1);
+
+    EXPECT_EQ(list.size(), 3);
+    EXPECT_EQ(list[0], 47);
+    EXPECT_EQ(list[1], 48);
+    EXPECT_EQ(list[2], 49);
+}
+
+TEST(ParseQuery, QueryParserLogPosHVariable1Test)
+{
+    CSubBlockRepositoryMock sbRepoMock;
+    for (int z = 0; z < 50; ++z)
+    {
+        SubBlockInfo sbInfo;
+        sbInfo.physicalSize.w = 10 * (z + 1);
+        sbInfo.physicalSize.h = 10 * (z + 1);
+        sbInfo.logicalRect.x = 1 * (z + 1);
+        sbInfo.logicalRect.y = 10 * (z + 1);
+        sbInfo.logicalRect.w = 100 * (z + 1);
+        sbInfo.logicalRect.h = 1000 * (z + 1);
+        sbInfo.coordinate.Set(DimensionIndex::Z, z);
+        sbRepoMock.AddSubBlock(sbInfo);
+    }
+
+    auto list = CQueryParser::GetSubBlocksMatching(&sbRepoMock, CQueryParser::ParseQueryString("LogPosHeight > 48000"), -1);
+
+    EXPECT_EQ(list.size(), 2);
+    EXPECT_EQ(list[0], 48);
+    EXPECT_EQ(list[1], 49);
+
+    list = CQueryParser::GetSubBlocksMatching(&sbRepoMock, CQueryParser::ParseQueryString("LogPosHeight >= 48000"), -1);
+
+    EXPECT_EQ(list.size(), 3);
+    EXPECT_EQ(list[0], 47);
+    EXPECT_EQ(list[1], 48);
+    EXPECT_EQ(list[2], 49);
 }
