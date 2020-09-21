@@ -537,7 +537,7 @@ TEST(ParseQuery, QueryParserWidthVariable1Test)
     EXPECT_EQ(list[0], 47);
     EXPECT_EQ(list[1], 48);
     EXPECT_EQ(list[2], 49);
-} 
+}
 
 TEST(ParseQuery, QueryParserHeightVariable1Test)
 {
@@ -683,4 +683,34 @@ TEST(ParseQuery, QueryParserLogPosHVariable1Test)
     EXPECT_EQ(list[0], 47);
     EXPECT_EQ(list[1], 48);
     EXPECT_EQ(list[2], 49);
+}
+
+TEST(ParseQuery, QueryParserIsLayer0Test)
+{
+    CSubBlockRepositoryMock sbRepoMock;
+    for (int z = 0; z < 50; ++z)
+    {
+        SubBlockInfo sbInfo;
+        sbInfo.physicalSize.w = 10 * (z + 1);
+        sbInfo.physicalSize.h = 10 * (z + 1);
+        sbInfo.logicalRect.x = 1 * (z + 1);
+        sbInfo.logicalRect.y = 10 * (z + 1);
+        if (z % 2 == 0)
+        {
+            sbInfo.logicalRect.w = sbInfo.physicalSize.w;
+            sbInfo.logicalRect.h = sbInfo.physicalSize.h;
+        }
+        else
+        {
+            sbInfo.logicalRect.w = sbInfo.physicalSize.w / 2;
+            sbInfo.logicalRect.h = sbInfo.physicalSize.h / 2;
+        }
+
+        sbInfo.coordinate.Set(DimensionIndex::Z, z);
+        sbRepoMock.AddSubBlock(sbInfo);
+    }
+
+    auto list = CQueryParser::GetSubBlocksMatching(&sbRepoMock, CQueryParser::ParseQueryString("IsLayer0 = 1"), -1);
+
+    EXPECT_EQ(list.size(), 25);
 }

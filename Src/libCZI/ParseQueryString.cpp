@@ -15,6 +15,7 @@ using namespace libCZI;
 /*static*/const char* CParserUtils::VariableName_LogicalPosY = "LogPosY";
 /*static*/const char* CParserUtils::VariableName_LogicalPosWidth = "LogPosWidth";
 /*static*/const char* CParserUtils::VariableName_LogicalPosHeight = "LogPosHeight";
+/*static*/const char* CParserUtils::VariableName_IsLayer0 = "IsLayer0";
 
 /*static*/string CParserUtils::GetRegexExpression(const std::string& possibleDimensions)
 {
@@ -31,6 +32,7 @@ using namespace libCZI;
 
     ss << VariableName_PhysicalWidth << '|' << VariableName_PhysicalHeight << '|';
     ss << VariableName_LogicalPosX << '|' << VariableName_LogicalPosY << '|' << VariableName_LogicalPosWidth << '|' << VariableName_LogicalPosHeight;
+    ss << '|' << VariableName_IsLayer0;
     ss << ')';
 
     stringstream ssRegex;
@@ -408,7 +410,8 @@ using namespace libCZI;
         {VariableName_LogicalPosX, VariableType::LogicalPositionX},
         {VariableName_LogicalPosY, VariableType::LogicalPositionY},
         {VariableName_LogicalPosWidth, VariableType::LogicalPositionWidth},
-        {VariableName_LogicalPosHeight, VariableType::LogicalPositionHeight}
+        {VariableName_LogicalPosHeight, VariableType::LogicalPositionHeight},
+        {VariableName_IsLayer0, VariableType::IsLayer0}
     };
 
     for (auto i : table)
@@ -516,12 +519,16 @@ using namespace libCZI;
     case VariableType::LogicalPositionY:
     case VariableType::LogicalPositionWidth:
     case VariableType::LogicalPositionHeight:
+    case VariableType::IsLayer0:
         val = evaluateData->GetVariable(type);
         break;
     case VariableType::Dimension:
         val = evaluateData->GetCoordinateValue(cond.GetDimension());
         break;
+    default:
+        throw LibCZIException("unexpected value for condition-type");
     }
+
     bool b = cond.Evaluate(val);
     return b;
 }

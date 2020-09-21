@@ -49,6 +49,9 @@ public:
             return this->infoRef->logicalRect.w;
         case VariableType::LogicalPositionHeight:
             return this->infoRef->logicalRect.h;
+        case VariableType::IsLayer0:
+            return (this->infoRef->logicalRect.w == this->infoRef->physicalSize.w &&
+                this->infoRef->logicalRect.h == this->infoRef->physicalSize.h) ? 1 : 0;
         default:
             throw runtime_error("illegal type");
         }

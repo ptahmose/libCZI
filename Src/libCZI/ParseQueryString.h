@@ -47,7 +47,8 @@ enum class VariableType
     LogicalPositionX,       ///< An enum constant representing that the variable is the x-position of the subblock's physical position.
     LogicalPositionY,       ///< An enum constant representing that the variable is the y-position of the subblock's physical position.
     LogicalPositionWidth,   ///< An enum constant representing that the variable is the width of the subblock's physical position.
-    LogicalPositionHeight   ///< An enum constant representing that the variable is the height of the subblock's physical position.
+    LogicalPositionHeight,  ///< An enum constant representing that the variable is the height of the subblock's physical position.
+    IsLayer0
 };
 
 /// This class contains all information in order to represent a condition.
@@ -169,6 +170,7 @@ private:
     static const char* VariableName_LogicalPosY;
     static const char* VariableName_LogicalPosWidth;
     static const char* VariableName_LogicalPosHeight;
+    static const char* VariableName_IsLayer0;
 
     static std::once_flag initRegex;
 
