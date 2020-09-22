@@ -57,6 +57,13 @@ namespace libCZI
         /// \param          maxResults   The maximum number of results to return. If less or equal to zero, then all ids are retrieved.
         /// \returns The ids of the subblocks matching the specified condition.
         static std::vector<int> GetSubBlocksMatching(libCZI::ISubBlockRepository* sbRepository, const std::shared_ptr<libCZI::IQueryCondition>& condition, int maxResults);
+
+        /// Gets a vector containing the ids of the subblocks matching the specified condition. The maximal number of ids which will be returned
+        /// may be specified.
+        /// \param [in,out] sbRepository The subblock repository.
+        /// \param          condition    The condition.
+        /// \param          maxResults   The maximum number of results to return. If less or equal to zero, then all ids are retrieved.
+        /// \returns The ids of the subblocks matching the specified condition.
         static std::vector<int> GetSubBlocksMatching(libCZI::ISubBlockRepository* sbRepository, const libCZI::IQueryCondition* condition, int maxResults);
     };
 }
