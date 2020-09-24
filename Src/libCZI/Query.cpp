@@ -109,7 +109,7 @@ public:
         [&](int idx, const SubBlockInfo& info)->bool
         {
             list.push_back(idx);
-            if (maxResults > 0 && list.size() > maxResults)
+            if (maxResults > 0 && list.size() >= maxResults)
             {
                 return false;
             }
