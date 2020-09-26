@@ -19,13 +19,13 @@ namespace libCZI
         /// a dimension not existent on a subblock.
         enum class HandlingOfNonExistentDimensions
         {
-            ///< A condition involving a non-existent condition evaluates to true.
+            ///< A condition involving a non-existent dimension evaluates to true.
             EvaluateToTrue,
 
-            ///< A condition involving a non-existent condition evaluates to false.
+            ///< A condition involving a non-existent dimension evaluates to false.
             EvaluateToFalse,
 
-            ///< A condition involving a non-existent will result in an error.
+            ///< A condition involving a non-existent dimension results in an error.
             Error
         };
 
