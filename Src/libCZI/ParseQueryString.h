@@ -2,6 +2,7 @@
 
 #include <regex>
 #include <mutex>  
+#include <utility>
 #include "libCZI.h"
 
 enum class Operator : std::uint8_t
@@ -152,7 +153,7 @@ public:
 class IEvaluationData
 {
 public:
-    virtual int GetCoordinateValue(libCZI::DimensionIndex dim) const = 0;
+    virtual std::pair<bool, int> GetCoordinateValue(libCZI::DimensionIndex dim) const = 0;
     virtual int GetVariable(VariableType type) const = 0;
 };
 
@@ -162,6 +163,7 @@ public:
     static std::vector<TokenItem> Tokenize(const std::string& str);
     static std::vector<TokenItem> ConvertToReversePolnish(const std::vector<TokenItem>& src);
     static bool CheckTokenList(const std::vector<TokenItem>& tokens);
+    static bool Evaluate(const std::vector<TokenItem>& tokens, const IEvaluationData* evaluateData, const libCZI::QueryOptions& options);
     static bool Evaluate(const std::vector<TokenItem>& tokens, const IEvaluationData* evaluateData);
 private:
     static const char* VariableName_PhysicalWidth;
@@ -205,7 +207,15 @@ private:
     static std::vector<int> ParseListOfIntegers(const std::string& str);
     static ConditionType StringToConditionType(const std::string& str);
     static bool IsOperatorPrecedenceHigher(Operator a, Operator b);
-    static bool EvaluateCondition(const CCondition& cond, const IEvaluationData* evaluateData);
+
+    enum class EvaluateConditionResult
+    {
+        EvaluatedToTrue,
+        EvaluatedToFalse,
+        UnknownDimension
+    };
+
+    static EvaluateConditionResult EvaluateCondition(const CCondition& cond, const IEvaluationData* evaluateData);
     static std::string GetAllPossibleDimensions();
 
     static RegexInfo regExInfo;

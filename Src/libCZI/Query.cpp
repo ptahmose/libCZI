@@ -1,4 +1,5 @@
 #include "libCZI.h"
+#include <utility>
 #include "ParseQueryString.h"
 
 using namespace std;
@@ -8,11 +9,22 @@ class CQueryCondition : public libCZI::IQueryCondition
 {
 private:
     vector<TokenItem> tokenlist;
+    QueryOptions      queryoptions;
 public:
-    CQueryCondition(vector<TokenItem>&& list) : tokenlist(move(list))
-    {}
+    CQueryCondition(vector<TokenItem>&& list, const QueryOptions* options) : tokenlist(move(list))
+    {
+        if (options != nullptr)
+        {
+            this->queryoptions = *options;
+        }
+        else
+        {
+            this->queryoptions.SetDefault();
+        }
+    }
 
     const vector<TokenItem> GetTokenList() const { return this->tokenlist; }
+    const QueryOptions& GetQueryOptions() const { return this->queryoptions; }
 };
 
 class CEvaluationWrapper : public IEvaluationData
@@ -25,12 +37,16 @@ public:
         this->infoRef = &info;
     }
 
-    virtual int GetCoordinateValue(DimensionIndex dim) const
+    virtual std::pair<bool, int> GetCoordinateValue(DimensionIndex dim) const
     {
         int value = std::numeric_limits<int>::min();
         bool b = this->infoRef->coordinate.TryGetPosition(dim, &value);
-        // TODO: how to deal with "false" here?
-        return value;
+        if (!b)
+        {
+            return make_pair(false, numeric_limits<int>::min());
+        }
+        
+        return make_pair(true, value);
     }
 
     virtual int GetVariable(VariableType type) const
@@ -58,12 +74,12 @@ public:
     }
 };
 
-/*static*/std::shared_ptr<libCZI::IQueryCondition> CQueryParser::ParseQueryString(const std::string& str)
+/*static*/std::shared_ptr<libCZI::IQueryCondition> CQueryParser::ParseQueryString(const std::string& str, const QueryOptions* options /*= nullptr*/)
 {
     auto l1 = CParserUtils::Tokenize(str);
     auto l2 = CParserUtils::ConvertToReversePolnish(l1);
 
-    auto r = make_shared<CQueryCondition>(move(l2));
+    auto r = make_shared<CQueryCondition>(move(l2), options);
     return r;
 }
 
@@ -85,7 +101,7 @@ public:
         [&](int idx, const SubBlockInfo& info)->bool
         {
             wrapper.SetSubblockInfo(info);
-            bool b = CParserUtils::Evaluate(queryCondition->GetTokenList(), &wrapper);
+            bool b = CParserUtils::Evaluate(queryCondition->GetTokenList(), &wrapper, queryCondition->GetQueryOptions());
             if (b == true)
             {
                 return funcEnum(idx, info);

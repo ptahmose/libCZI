@@ -15,9 +15,9 @@ public:
         : func(func)
     {}
 
-    virtual int GetCoordinateValue(DimensionIndex dim) const
+    virtual std::pair<bool, int> GetCoordinateValue(DimensionIndex dim) const
     {
-        return func(dim);
+        return make_pair(true, func(dim));
     }
 
     virtual int GetVariable(VariableType type) const

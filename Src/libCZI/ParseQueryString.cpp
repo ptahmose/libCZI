@@ -336,6 +336,13 @@ using namespace libCZI;
 
 /*static*/bool CParserUtils::Evaluate(const std::vector<TokenItem>& tokens, const IEvaluationData* evaluateData)
 {
+    libCZI::QueryOptions queryOptions;
+    queryOptions.SetDefault();
+    return CParserUtils::Evaluate(tokens, evaluateData, queryOptions);
+}
+
+/*static*/bool CParserUtils::Evaluate(const std::vector<TokenItem>& tokens, const IEvaluationData* evaluateData, const libCZI::QueryOptions& options)
+{
     stack<bool> evalStack;
 
     for (const auto& t : tokens)
@@ -344,8 +351,41 @@ using namespace libCZI;
         {
         case Token::Condition:
         {
-            bool b = EvaluateCondition(t.condition, evaluateData);
-            evalStack.push(b);
+            auto r = EvaluateCondition(t.condition, evaluateData);
+            bool evaluationResult;
+            switch (r)
+            {
+            case CParserUtils::EvaluateConditionResult::EvaluatedToTrue:
+                evaluationResult = true;
+                break;
+            case CParserUtils::EvaluateConditionResult::EvaluatedToFalse:
+                evaluationResult = false;
+                break;
+            case CParserUtils::EvaluateConditionResult::UnknownDimension:
+                switch (options.handlingNonExistentDimensions)
+                {
+                case QueryOptions::HandlingOfNonExistentDimensions::EvaluateToTrue:
+                    evaluationResult = true;
+                    break;
+                case QueryOptions::HandlingOfNonExistentDimensions::EvaluateToFalse:
+                    evaluationResult = false;
+                    break;
+                case QueryOptions::HandlingOfNonExistentDimensions::Error:
+                {
+                    stringstream ss;
+                    ss << "Non-existent dimension \"" << Utils::DimensionToChar(t.condition.GetDimension()) << "\".";
+                    throw LibCZIQueryExecutionException(ss.str(), LibCZIQueryExecutionException::ErrorType::NonExistentDimension);
+                }
+                default:
+                    throw LibCZIQueryExecutionException("Invalid enum encountered.", LibCZIQueryExecutionException::ErrorType::InternalError);
+                }
+
+                break;
+            default:
+                throw LibCZIQueryExecutionException("Invalid enum encountered.", LibCZIQueryExecutionException::ErrorType::InternalError);
+            }
+
+            evalStack.push(evaluationResult);
             break;
         }
         case Token::Operator:
@@ -507,7 +547,7 @@ using namespace libCZI;
     return false;
 }
 
-/*static*/bool CParserUtils::EvaluateCondition(const CCondition& cond, const IEvaluationData* evaluateData)
+/*static*/CParserUtils::EvaluateConditionResult CParserUtils::EvaluateCondition(const CCondition& cond, const IEvaluationData* evaluateData)
 {
     auto type = cond.GetVariableType();
     int val = -1;
@@ -523,14 +563,23 @@ using namespace libCZI;
         val = evaluateData->GetVariable(type);
         break;
     case VariableType::Dimension:
-        val = evaluateData->GetCoordinateValue(cond.GetDimension());
-        break;
+    {
+        auto r = evaluateData->GetCoordinateValue(cond.GetDimension());
+        if (!r.first)
+        {
+            return EvaluateConditionResult::UnknownDimension;
+        }
+
+        val = r.second;
+    }
+
+    break;
     default:
         throw LibCZIException("unexpected value for condition-type");
     }
 
     bool b = cond.Evaluate(val);
-    return b;
+    return b ? EvaluateConditionResult::EvaluatedToTrue : EvaluateConditionResult::EvaluatedToFalse;
 }
 
 //-----------------------------------------------------------------------------

@@ -13,6 +13,30 @@ namespace libCZI
         virtual ~IQueryCondition() {};
     };
 
+    struct QueryOptions
+    {
+        /// Values that indicate how to deal with a condition which references
+        /// a dimension not existent on a subblock.
+        enum class HandlingOfNonExistentDimensions
+        {
+            ///< A condition involving a non-existent condition evaluates to true.
+            EvaluateToTrue,
+
+            ///< A condition involving a non-existent condition evaluates to false.
+            EvaluateToFalse,
+
+            ///< A condition involving a non-existent will result in an error.
+            Error
+        };
+
+        HandlingOfNonExistentDimensions handlingNonExistentDimensions;
+
+        void SetDefault()
+        {
+            this->handlingNonExistentDimensions = HandlingOfNonExistentDimensions::EvaluateToTrue;
+        }
+    };
+
     /// Methods for parsing queries and querying a subblock-repository are found here.
     /// The syntax for the query is as follows: conditions of the form "variable = constant" can
     /// be formulated, and multiple conditions can be combined with boolean operators (AND, OR, XOR, NOT).
@@ -34,7 +58,7 @@ namespace libCZI
         /// during the parsing, an exception is thrown.
         /// \param str The query expression.
         /// \returns An object representing the parsed query.
-        static std::shared_ptr<libCZI::IQueryCondition> ParseQueryString(const std::string& str);
+        static std::shared_ptr<libCZI::IQueryCondition> ParseQueryString(const std::string& str, const QueryOptions* options = nullptr);
 
         /// Enumerate the subblock-repository for subblocks matching the specified condition. For each subblock matching
         /// the condition, the specified callback is called. If the callback returns false, the enumeration is stopped.

@@ -27,252 +27,299 @@
 
 namespace libCZI
 {
-	/// Base class for all libCZI-specific exceptions.
-	class LibCZIException : public std::runtime_error
-	{
-	public:
-		/// Constructor.
-		/// \param szErrMsg Message describing the error.
-		explicit LibCZIException(const char* szErrMsg)
-			: std::runtime_error(szErrMsg)
-		{}
-	};
+    /// Base class for all libCZI-specific exceptions.
+    class LibCZIException : public std::runtime_error
+    {
+    public:
+        /// Constructor.
+        /// \param szErrMsg Message describing the error.
+        explicit LibCZIException(const char* szErrMsg)
+            : std::runtime_error(szErrMsg)
+        {}
+    };
 
-	/// Exception for signaling errors specific for accessors.
-	class LibCZIAccessorException : public LibCZIException
-	{
-	public:
-		/// Values that represent error types.
-		enum class ErrorType
-		{
-			CouldntDeterminePixelType,	///< The pixeltype could not be determined.
-			Unspecified					///< Unspecified error.
-		};
-	private:
-		ErrorType errorType;
-	public:
-		/// Constructor for the LibCZIAccessorException.
-		/// \param szErrMsg  Message describing the error. This type is used
-		/// to signal error that are specific for accessors.
-		/// \param errorType Type of the error.
-		LibCZIAccessorException(const char* szErrMsg, ErrorType errorType)
-			: LibCZIException(szErrMsg), errorType(errorType)
-		{}
+    /// Exception for signaling errors specific for accessors.
+    class LibCZIAccessorException : public LibCZIException
+    {
+    public:
+        /// Values that represent error types.
+        enum class ErrorType
+        {
+            CouldntDeterminePixelType,	///< The pixeltype could not be determined.
+            Unspecified					///< Unspecified error.
+        };
+    private:
+        ErrorType errorType;
+    public:
+        /// Constructor for the LibCZIAccessorException.
+        /// \param szErrMsg  Message describing the error. This type is used
+        /// to signal error that are specific for accessors.
+        /// \param errorType Type of the error.
+        LibCZIAccessorException(const char* szErrMsg, ErrorType errorType)
+            : LibCZIException(szErrMsg), errorType(errorType)
+        {}
 
-		/// Gets error type.
-		/// \return The error type.
-		ErrorType GetErrorType() const { return this->errorType; };
-	};
+        /// Gets error type.
+        /// \return The error type.
+        ErrorType GetErrorType() const { return this->errorType; };
+    };
 
-	/// Exception for signaling that a string did not parse correctly.
-	class LibCZIStringParseException : public LibCZIException
-	{
-	public:
-		/// Values that represent error types.
-		enum class ErrorType
-		{
-			InvalidSyntax,		///< The string parsed has an invalid syntax.
-			DuplicateDimension, ///< When parsing a string representation of a coordinate, it was detected, that a dimension occured more than once.
-			FromGreaterThanTo,  ///< A range was parsed, and the start value is bigger than the end value.
-			Unspecified			///< General error.
-		};
-	private:
-		ErrorType errorType;
-		int numberOfCharsParsedOk;
-	public:
+    /// Exception for signaling that a string did not parse correctly.
+    class LibCZIStringParseException : public LibCZIException
+    {
+    public:
+        /// Values that represent error types.
+        enum class ErrorType
+        {
+            InvalidSyntax,		///< The string parsed has an invalid syntax.
+            DuplicateDimension, ///< When parsing a string representation of a coordinate, it was detected, that a dimension occured more than once.
+            FromGreaterThanTo,  ///< A range was parsed, and the start value is bigger than the end value.
+            Unspecified			///< General error.
+        };
+    private:
+        ErrorType errorType;
+        int numberOfCharsParsedOk;
+    public:
 
-		/// Constructor for the LibCZIStringParseException. This type is used
-		/// to signal that a string did not parse correctly.
-		/// \param szErrMsg				 Message describing the error.
-		/// \param numberOfCharsParsedOk Number of characters parsed ok. The parse error occured after this position. If negative, then this information is not available.
-		/// \param errorType			 Type of the error.
-		LibCZIStringParseException(const char* szErrMsg, int numberOfCharsParsedOk, ErrorType errorType)
-			: LibCZIException(szErrMsg), errorType(errorType), numberOfCharsParsedOk(numberOfCharsParsedOk)
-		{}
+        /// Constructor for the LibCZIStringParseException. This type is used
+        /// to signal that a string did not parse correctly.
+        /// \param szErrMsg				 Message describing the error.
+        /// \param numberOfCharsParsedOk Number of characters parsed ok. The parse error occured after this position. If negative, then this information is not available.
+        /// \param errorType			 Type of the error.
+        LibCZIStringParseException(const char* szErrMsg, int numberOfCharsParsedOk, ErrorType errorType)
+            : LibCZIException(szErrMsg), errorType(errorType), numberOfCharsParsedOk(numberOfCharsParsedOk)
+        {}
 
-		/// Gets error type.
-		/// \return The error type.
-		ErrorType GetErrorType() const { return this->errorType; };
+        /// Gets error type.
+        /// \return The error type.
+        ErrorType GetErrorType() const { return this->errorType; };
 
-		/// Gets number of characters that parsed correctly. The parse error occured after this position.
-		/// If this number is negative, then this information is not available and valid.
-		/// \return The number of characters parsed that parsed correctly. If the number is negative, this information is not available.
-		int GetNumberOfCharsParsedOk() const { return this->numberOfCharsParsedOk; }
-	};
-
-
-	/// Exception for signaling an I/O error. If the problem originates from the
-	/// (external) stream-object, then the original exception is enclosed here as
-	/// a nested exception. In order to access the nested exception, use something
-	/// like this:
-	/// @code
-	/// try
-	///		{
-	///			spReader->Open(stream);
-	///		}
-	///		catch (LibCZIIOException& excp)
-	///		{
-	///			try
-	///			{
-	///				excp.rethrow_nested();
-	///			}
-	///			catch (std::ios_base::failure& innerExcp) // assuming that is the exception you 
-	///			{                                         // expect to be thrown from the stream-object
-	///			 ....
-	///			}
-	///		}
-	///	@endcode
-	class LibCZIIOException : public LibCZIException, public std::nested_exception
-	{
-	private:
-		std::uint64_t offset;
-		std::uint64_t size;
-	public:
-		/// Constructor for the LibCZIIOException. This type is used
-		/// to signal an I/O-error from the underlying stream.
-		///
-		/// \param szErrMsg Message describing the error.
-		/// \param offset   The offset (into the stream) at which the I/O-error occured.
-		/// \param size	    The size of data we have attempted to read (when the I/O-error occured).
-		LibCZIIOException(const char* szErrMsg, std::uint64_t offset, std::uint64_t size)
-			: LibCZIException(szErrMsg), offset(offset), size(size)  {}
-
-		/// Gets the offset (in bytes) into the stream at which
-		/// the I/O-error occured.
-		///
-		/// \return The offset  (in bytes).
-		std::uint64_t GetOffset() const { return this->offset; }
-
-		/// Gets the size of data (in bytes) we attempted to read
-		/// when the I/O-error occured.
-		///
-		/// \return The size (in bytes).
-		std::uint64_t GetSize() const { return this->size; }
-	};
+        /// Gets number of characters that parsed correctly. The parse error occured after this position.
+        /// If this number is negative, then this information is not available and valid.
+        /// \return The number of characters parsed that parsed correctly. If the number is negative, this information is not available.
+        int GetNumberOfCharsParsedOk() const { return this->numberOfCharsParsedOk; }
+    };
 
 
-	/// Exception for signaling errors parsing the CZI-stream.
-	struct LibCZICZIParseException : public LibCZIException
-	{
-		/// Values that represent different error conditions.
-		enum class ErrorCode
-		{
-			NotEnoughData,	///< An enum constant representing that not the expected amount of data could be read.
-			CorruptedData,  ///< An enum constant representing that the data was detected to be bogus.
-			InternalError	///< An internal error was detected.
-		};
+    /// Exception for signaling an I/O error. If the problem originates from the
+    /// (external) stream-object, then the original exception is enclosed here as
+    /// a nested exception. In order to access the nested exception, use something
+    /// like this:
+    /// @code
+    /// try
+    ///		{
+    ///			spReader->Open(stream);
+    ///		}
+    ///		catch (LibCZIIOException& excp)
+    ///		{
+    ///			try
+    ///			{
+    ///				excp.rethrow_nested();
+    ///			}
+    ///			catch (std::ios_base::failure& innerExcp) // assuming that is the exception you 
+    ///			{                                         // expect to be thrown from the stream-object
+    ///			 ....
+    ///			}
+    ///		}
+    ///	@endcode
+    class LibCZIIOException : public LibCZIException, public std::nested_exception
+    {
+    private:
+        std::uint64_t offset;
+        std::uint64_t size;
+    public:
+        /// Constructor for the LibCZIIOException. This type is used
+        /// to signal an I/O-error from the underlying stream.
+        ///
+        /// \param szErrMsg Message describing the error.
+        /// \param offset   The offset (into the stream) at which the I/O-error occured.
+        /// \param size	    The size of data we have attempted to read (when the I/O-error occured).
+        LibCZIIOException(const char* szErrMsg, std::uint64_t offset, std::uint64_t size)
+            : LibCZIException(szErrMsg), offset(offset), size(size) {}
 
-		/// Constructor for the LibCZICZIParseException. This type is used
-		/// to signal that there was a parsing error.
-		/// \param szErrMsg Message describing the error.
-		/// \param code	    The error code.
-		LibCZICZIParseException(const char* szErrMsg, ErrorCode code)
-			: LibCZIException(szErrMsg), errorCode(code)
-		{
-		}
+        /// Gets the offset (in bytes) into the stream at which
+        /// the I/O-error occured.
+        ///
+        /// \return The offset  (in bytes).
+        std::uint64_t GetOffset() const { return this->offset; }
 
-		/// Gets error code.
-		/// \return The error code.
-		ErrorCode GetErrorCode() const { return this->errorCode; }
-	private:
-		ErrorCode errorCode;
-	};
+        /// Gets the size of data (in bytes) we attempted to read
+        /// when the I/O-error occured.
+        ///
+        /// \return The size (in bytes).
+        std::uint64_t GetSize() const { return this->size; }
+    };
 
-	/// Exception for signaling an incorrect plane-coordinate object.
-	struct LibCZIInvalidPlaneCoordinateException : public LibCZIException
-	{
-		/// Values that represent different error conditions.
-		enum class ErrorCode
-		{
-			SurplusDimension,	 ///< An enum constant representing a dimension was specified which is not found in the document.
-			MissingDimension,    ///< An enum constant representing that the plane-coordinate did not contain a coordinate which is required to specify a plane.
-			InvalidDimension,	 ///< An enum constant representing that the plane-coordinate contained a dimension which is not used to specify a plane.
-			CoordinateOutOfRange ///< An enum constant representing that a coordinate was given which is out-of-range.
-		};
 
-		/// Constructor for the LibCZIInvalidPlaneCoordinateException. This type is used
-		/// to signal that a plane-coordinate was determined to be invalid.
-		/// \param szErrMsg Message describing the error.
-		/// \param code	    The error code.
-		LibCZIInvalidPlaneCoordinateException(const char* szErrMsg, ErrorCode code)
-			: LibCZIException(szErrMsg), errorCode(code)
-		{
-		}
-	private:
-		ErrorCode errorCode;
-	};
+    /// Exception for signaling errors parsing the CZI-stream.
+    struct LibCZICZIParseException : public LibCZIException
+    {
+        /// Values that represent different error conditions.
+        enum class ErrorCode
+        {
+            NotEnoughData,	///< An enum constant representing that not the expected amount of data could be read.
+            CorruptedData,  ///< An enum constant representing that the data was detected to be bogus.
+            InternalError	///< An internal error was detected.
+        };
+
+        /// Constructor for the LibCZICZIParseException. This type is used
+        /// to signal that there was a parsing error.
+        /// \param szErrMsg Message describing the error.
+        /// \param code	    The error code.
+        LibCZICZIParseException(const char* szErrMsg, ErrorCode code)
+            : LibCZIException(szErrMsg), errorCode(code)
+        {
+        }
+
+        /// Gets error code.
+        /// \return The error code.
+        ErrorCode GetErrorCode() const { return this->errorCode; }
+    private:
+        ErrorCode errorCode;
+    };
+
+    /// Exception for signaling an incorrect plane-coordinate object.
+    struct LibCZIInvalidPlaneCoordinateException : public LibCZIException
+    {
+        /// Values that represent different error conditions.
+        enum class ErrorCode
+        {
+            SurplusDimension,	 ///< An enum constant representing a dimension was specified which is not found in the document.
+            MissingDimension,    ///< An enum constant representing that the plane-coordinate did not contain a coordinate which is required to specify a plane.
+            InvalidDimension,	 ///< An enum constant representing that the plane-coordinate contained a dimension which is not used to specify a plane.
+            CoordinateOutOfRange ///< An enum constant representing that a coordinate was given which is out-of-range.
+        };
+
+        /// Constructor for the LibCZIInvalidPlaneCoordinateException. This type is used
+        /// to signal that a plane-coordinate was determined to be invalid.
+        /// \param szErrMsg Message describing the error.
+        /// \param code	    The error code.
+        LibCZIInvalidPlaneCoordinateException(const char* szErrMsg, ErrorCode code)
+            : LibCZIException(szErrMsg), errorCode(code)
+        {
+        }
+    private:
+        ErrorCode errorCode;
+    };
 
     /// Exception for signaling errors when accessing the XML-metadata.
-	class LibCZIMetadataException : public LibCZIException
-	{
-	public:
-		/// Values that represent different error conditions.
-		enum class ErrorType
-		{
-			InvalidPath,			///< the path specified in a call to IXmlNodeRead::GetChildNodeReadonly was invalid
-		};
+    class LibCZIMetadataException : public LibCZIException
+    {
+    public:
+        /// Values that represent different error conditions.
+        enum class ErrorType
+        {
+            InvalidPath,			///< the path specified in a call to IXmlNodeRead::GetChildNodeReadonly was invalid
+        };
 
-		/// Constructor for the LibCZIMetadataBuilderException. This type is used
-		/// to signal errors when using the Czi-metadata-builder-object.
-		/// \param szErrMsg Message describing the error.
-		/// \param code	    The error code.
-		LibCZIMetadataException(const char* szErrMsg, ErrorType code)
-			: LibCZIException(szErrMsg), errorType(code)
-		{
-		}
+        /// Constructor for the LibCZIMetadataBuilderException. This type is used
+        /// to signal errors when using the Czi-metadata-builder-object.
+        /// \param szErrMsg Message describing the error.
+        /// \param code	    The error code.
+        LibCZIMetadataException(const char* szErrMsg, ErrorType code)
+            : LibCZIException(szErrMsg), errorType(code)
+        {
+        }
 
-		/// Gets error code.
-		/// \return The error code.
-		ErrorType GetErrorType() const { return this->errorType; }
+        /// Gets error code.
+        /// \return The error code.
+        ErrorType GetErrorType() const { return this->errorType; }
 
-	private:
-		ErrorType errorType;
-	};
+    private:
+        ErrorType errorType;
+    };
 
-	/// Exception for signaling errors when parsing the XML-metadata.
-	class LibCZIXmlParseException : public LibCZIException
-	{
-	public:
-		/// Constructor for the LibCZIXmlParseException. This type is used
-		/// signaling errors when parsing the XML-metadata.
-		/// \param szErrMsg Message describing the error.
-		LibCZIXmlParseException(const char* szErrMsg)
-			: LibCZIException(szErrMsg)
-		{
-		}
-	};
+    /// Exception for signaling errors when parsing the XML-metadata.
+    class LibCZIXmlParseException : public LibCZIException
+    {
+    public:
+        /// Constructor for the LibCZIXmlParseException. This type is used
+        /// signaling errors when parsing the XML-metadata.
+        /// \param szErrMsg Message describing the error.
+        LibCZIXmlParseException(const char* szErrMsg)
+            : LibCZIException(szErrMsg)
+        {
+        }
+    };
 
-	/// Exception for signaling errors when parsing a query-string.
-	class LibCZIQueryParseException : public LibCZIException
-	{
-	public:
-		/// Values that represent different error conditions.
-		enum class ErrorType
-		{
-			SyntaxError,
-			UnbalancedParenthesis,
-			IllformedExpression,
-			InvalidNumberFormat
-		};
-	private:
-		ErrorType errorType;
-		int parseErrorAfterCharNo;
-	public:
-		LibCZIQueryParseException(const char* szErrMsg, ErrorType errorType)
-			: LibCZIQueryParseException(szErrMsg, errorType, -1)
-		{}
+    /// Exception for signaling errors when parsing a query-string.
+    class LibCZIQueryParseException : public LibCZIException
+    {
+    public:
+        /// Values that represent different error conditions.
+        enum class ErrorType
+        {
+            SyntaxError,
+            UnbalancedParenthesis,
+            IllformedExpression,
+            InvalidNumberFormat
+        };
+    private:
+        ErrorType errorType;
+        int parseErrorAfterCharNo;
+    public:
+        /// Constructor for the LibCZIQueryParseException-exception. This exception is used to 
+        /// signal errors when parsing a query-string.
+        /// \param szErrMsg          Message describing the error.
+        /// \param errorType         Type of the error.
+        LibCZIQueryParseException(const char* szErrMsg, ErrorType errorType)
+            : LibCZIQueryParseException(szErrMsg, errorType, -1)
+        {}
 
-		/// Constructor.
-		/// \param szErrMsg Message describing the error.
-		explicit LibCZIQueryParseException(const char* szErrMsg, ErrorType errorType, int indexOfParseError)
-			: LibCZIException(szErrMsg), 
-			errorType(errorType), 
-			parseErrorAfterCharNo(indexOfParseError)
-		{}
+        /// Constructor for the LibCZIQueryParseException-exception. This exception is used to 
+        /// signal errors when parsing a query-string.
+        /// \param szErrMsg          Message describing the error.
+        /// \param errorType         Type of the error.
+        /// \param indexOfParseError The index to the character of the query string where the error was detected. If negative, this value is not valid.
+        explicit LibCZIQueryParseException(const char* szErrMsg, ErrorType errorType, int indexOfParseError)
+            : LibCZIException(szErrMsg),
+            errorType(errorType),
+            parseErrorAfterCharNo(indexOfParseError)
+        {}
 
-		ErrorType GetErrorType() const { return this->errorType; }
-		int GetPositionAfterWhichParserErrorOccurred() const { return this->parseErrorAfterCharNo; }
-	};
+        /// Gets error type
+        /// \returns The error type.
+        ErrorType GetErrorType() const { return this->errorType; }
 
+        /// Gets position of the character in the query-string after which the parser error occurred.
+        /// If negative, this value is not valid.
+        /// \returns The position after which parser error occurred.
+        int GetPositionAfterWhichParserErrorOccurred() const { return this->parseErrorAfterCharNo; }
+    };
+
+    /// Exception for signaling errors when evaluating a query.
+    class LibCZIQueryExecutionException : public LibCZIException
+    {
+    public:
+        /// Values that represent different error conditions.
+        enum class ErrorType
+        {
+            NonExistentDimension,
+            InternalError
+        };
+    private:
+        ErrorType errorType;
+    public:
+        /// Constructor for the LibCZIQueryExecutionException-exception. This exception is used to
+        /// signal errors when  evaluating a query.
+        /// \param szErrMsg         Message describing the error.
+        /// \param errorType        Type of the error.
+        explicit LibCZIQueryExecutionException(const char* szErrMsg, ErrorType errorType)
+            : LibCZIException(szErrMsg),
+            errorType(errorType)
+        {}
+
+        /// Constructor for the LibCZIQueryExecutionException-exception. This exception is used to
+        /// signal errors when  evaluating a query.
+        /// \param errMsg            Message describing the error.
+        /// \param errorType         Type of the error.
+        explicit LibCZIQueryExecutionException(const std::string& errMsg, ErrorType errorType)
+            : LibCZIQueryExecutionException(errMsg.c_str(), errorType)
+        {}
+
+        /// Gets error type
+        /// \returns The error type.
+        ErrorType GetErrorType() const { return this->errorType; }
+    };
 }
 
