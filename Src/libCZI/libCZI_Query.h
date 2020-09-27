@@ -51,7 +51,7 @@ namespace libCZI
     /// LogPosWidth    | the width of the logical subblock position
     /// LogPosHeight   | the height of the logical subblock position
     /// IsLayer0       | gives "1" if the subblock is in pyramid layer 0, and "0" otherwise
-    class CQueryParser
+    class LIBCZI_API CQueryParser
     {
     public:
         /// Parse the specified query expression and return an object representing the parsed query. In

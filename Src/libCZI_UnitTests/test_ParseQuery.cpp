@@ -714,3 +714,109 @@ TEST(ParseQuery, QueryParserIsLayer0Test)
 
     EXPECT_EQ(list.size(), 25);
 }
+
+TEST(ParseQuery, NonExistentDimensionExpectExceptionTest)
+{
+    CSubBlockRepositoryMock sbRepoMock;
+    for (int z = 0; z < 50; ++z)
+    {
+        SubBlockInfo sbInfo;
+        sbInfo.physicalSize.w = 10 * (z + 1);
+        sbInfo.physicalSize.h = 10 * (z + 1);
+        sbInfo.logicalRect.x = 1 * (z + 1);
+        sbInfo.logicalRect.y = 10 * (z + 1);
+        if (z % 2 == 0)
+        {
+            sbInfo.logicalRect.w = sbInfo.physicalSize.w;
+            sbInfo.logicalRect.h = sbInfo.physicalSize.h;
+        }
+        else
+        {
+            sbInfo.logicalRect.w = sbInfo.physicalSize.w / 2;
+            sbInfo.logicalRect.h = sbInfo.physicalSize.h / 2;
+        }
+
+        sbInfo.coordinate.Set(DimensionIndex::Z, z);
+        sbRepoMock.AddSubBlock(sbInfo);
+    }
+
+    bool expectedExceptionOccurred = false;
+    QueryOptions opts{ QueryOptions::HandlingOfNonExistentDimensions::Error };
+    try
+    {
+        auto list = CQueryParser::GetSubBlocksMatching(&sbRepoMock, CQueryParser::ParseQueryString("T >= 1", &opts), -1);
+    }
+    catch (LibCZIQueryExecutionException& excp)
+    {
+        if (excp.GetErrorType() == LibCZIQueryExecutionException::ErrorType::NonExistentDimension)
+        {
+            expectedExceptionOccurred = true;
+        }
+    }
+
+    EXPECT_EQ(expectedExceptionOccurred, true);
+}
+
+TEST(ParseQuery, NonExistentDimensionEvaluateToTrueTest)
+{
+    CSubBlockRepositoryMock sbRepoMock;
+    for (int z = 0; z < 50; ++z)
+    {
+        SubBlockInfo sbInfo;
+        sbInfo.physicalSize.w = 10 * (z + 1);
+        sbInfo.physicalSize.h = 10 * (z + 1);
+        sbInfo.logicalRect.x = 1 * (z + 1);
+        sbInfo.logicalRect.y = 10 * (z + 1);
+        if (z % 2 == 0)
+        {
+            sbInfo.logicalRect.w = sbInfo.physicalSize.w;
+            sbInfo.logicalRect.h = sbInfo.physicalSize.h;
+        }
+        else
+        {
+            sbInfo.logicalRect.w = sbInfo.physicalSize.w / 2;
+            sbInfo.logicalRect.h = sbInfo.physicalSize.h / 2;
+        }
+
+        sbInfo.coordinate.Set(DimensionIndex::Z, z);
+        sbRepoMock.AddSubBlock(sbInfo);
+    }
+
+    bool expectedExceptionOccurred = false;
+    QueryOptions opts{ QueryOptions::HandlingOfNonExistentDimensions::EvaluateToTrue };
+    auto list = CQueryParser::GetSubBlocksMatching(&sbRepoMock, CQueryParser::ParseQueryString("T >= 1", &opts), -1);
+
+    EXPECT_EQ(list.size(), 50);
+}
+
+TEST(ParseQuery, NonExistentDimensionEvaluateToFalseTest)
+{
+    CSubBlockRepositoryMock sbRepoMock;
+    for (int z = 0; z < 50; ++z)
+    {
+        SubBlockInfo sbInfo;
+        sbInfo.physicalSize.w = 10 * (z + 1);
+        sbInfo.physicalSize.h = 10 * (z + 1);
+        sbInfo.logicalRect.x = 1 * (z + 1);
+        sbInfo.logicalRect.y = 10 * (z + 1);
+        if (z % 2 == 0)
+        {
+            sbInfo.logicalRect.w = sbInfo.physicalSize.w;
+            sbInfo.logicalRect.h = sbInfo.physicalSize.h;
+        }
+        else
+        {
+            sbInfo.logicalRect.w = sbInfo.physicalSize.w / 2;
+            sbInfo.logicalRect.h = sbInfo.physicalSize.h / 2;
+        }
+
+        sbInfo.coordinate.Set(DimensionIndex::Z, z);
+        sbRepoMock.AddSubBlock(sbInfo);
+    }
+
+    bool expectedExceptionOccurred = false;
+    QueryOptions opts{ QueryOptions::HandlingOfNonExistentDimensions::EvaluateToFalse };
+    auto list = CQueryParser::GetSubBlocksMatching(&sbRepoMock, CQueryParser::ParseQueryString("T >= 1", &opts), -1);
+
+    EXPECT_EQ(list.size(), 0);
+}
