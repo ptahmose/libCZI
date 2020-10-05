@@ -17,6 +17,12 @@ steps:
     echo Add other tasks to build, test, and deploy your project.
     echo See https://aka.ms/yaml
     sudo apt-get -qq update 
-    sudo apt-get -qq install doxygen
-    doxygen
+    sudo apt-get -qq install doxygen texlive-latex-base texlive-latex-base
+    doxygen -v
   displayName: 'Install doxygen'
+
+- script: |
+    cd  $(Build.SourcesDirectory)
+    cd Src
+    doxygen
+  displayName: 'Run doxygen'
