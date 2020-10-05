@@ -305,5 +305,6 @@ Src/Build/VS/x64/static Debug
 Src/Build/VS/Win32/static Release/*.lib
 Src/Build/VS/Win32/static Release/*.dll
 Src/Build/VS/Win32/static Release/*.exp
+Src/Build/Doxygen
 out/build/
 enc_temp_folder/
