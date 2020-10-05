@@ -13,6 +13,7 @@ namespace libCZI
         virtual ~IQueryCondition() {};
     };
 
+    /// This structure gathers options for the query-construction.
     struct QueryOptions
     {
         /// Values that indicate how to deal with a condition which references
@@ -29,8 +30,10 @@ namespace libCZI
             Error
         };
 
+        /// This field describes how "non existent dimensions" are treated in a query expression.
         HandlingOfNonExistentDimensions handlingNonExistentDimensions;
 
+        /// Sets the struct to default values.
         void SetDefault()
         {
             this->handlingNonExistentDimensions = HandlingOfNonExistentDimensions::EvaluateToTrue;
