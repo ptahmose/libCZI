@@ -17,6 +17,6 @@ steps:
     echo Add other tasks to build, test, and deploy your project.
     echo See https://aka.ms/yaml
     sudo apt-get -qq update 
-    sudo apt-get -qq doxygen
+    sudo apt-get -qq install doxygen
     doxygen
   displayName: 'Install doxygen'
