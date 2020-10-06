@@ -114,7 +114,7 @@ This piece of code will extract a small rectangular region from a huge multi-til
 	cziReader->Open(stream);
 	auto statistics = cziReader->GetStatistics();
 	auto accessor = cziReader->CreateSingleChannelTileAccessor();
-	libCZI::CDimCoordinate planeCoord{ { NaCZIr::DimensionIndex::C,1 } };	// the document only contains C-dimension
+	libCZI::CDimCoordinate planeCoord{ { libCZI::DimensionIndex::C,1 } };	// the document only contains C-dimension
 	auto multiTileComposit = accessor->Get(
 		libCZI::IntRect{ statistics.boundingBox.x + 26152, statistics.boundingBox.y + 32215 ,3000,2200 },
 		&planeCoord,
