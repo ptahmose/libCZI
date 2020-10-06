@@ -32,7 +32,7 @@ steps:
     pwd
     git clone https://github.com/ptahmose/libCZI-doc.git
     cd libCZI-doc
-    rsync -avu --delete "$(Build.SourcesDirectory)/Src/Build/Doxygen" .
+    rsync -avu --delete "$(Build.SourcesDirectory)/Src/Build/Doxygen/html" ./docs
     git config user.name "Azure-Pipelines libCZI Documentation builder"
     git config user.email "nobody@h-quer.de"
     git add .
