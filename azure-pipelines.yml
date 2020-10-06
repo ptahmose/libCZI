@@ -37,5 +37,8 @@ steps:
     git config user.email "nobody@h-quer.de"
     git add .
     git commit -m "Updating with latest documentation build"
+    git push https://$(GITHUBPATDOC)@github.com/ptahmose/libCZI-doc.git
   displayName: 'Upload doxygen-result to "libCZI-doc"-Github-repository'
+  env:
+    GITHUBPATDOC: $(GitHubPATdoc) # Maps the secret variable $(token) from my-var-group
 
