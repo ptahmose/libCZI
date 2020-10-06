@@ -31,7 +31,7 @@ steps:
     git config user.name "Azure-Pipelines libCZI Documentation builder"
     git config user.email "nobody@h-quer.de"
     git add .
-    git commit -m "Updating with latest documentation build"
+    git commit -m "Updating with latest documentation build ($(Build.BuildId))"
     git push https://$(GITHUBPATDOC)@github.com/ptahmose/libCZI-doc.git
   displayName: 'Upload doxygen-result to "libCZI-doc"-Github-repository'
   env:
