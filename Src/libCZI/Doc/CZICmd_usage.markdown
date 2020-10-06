@@ -3,7 +3,7 @@ CZIcmd Documentation                 {#naczircmd}
 
 The console application "CZIcmd" is provided for two purposes:
 - demonstrate the usage of the libCZI
-- it might be useful to convert/extract data from a CZI-file
+- it is useful to convert/extract data from a CZI-file and to inspect it
 
 The parameters of the program are:
 
