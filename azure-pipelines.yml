@@ -33,6 +33,8 @@ steps:
     git clone https://github.com/ptahmose/libCZI-doc.git
     cd libCZI-doc
     rsync -avu --delete "$(Build.SourcesDirectory)/Src/Build/Doxygen" .
+    git config user.name "Azure-Pipelines libCZI Documentation builder"
+    git config user.email "nobody@h-quer.de"
     git add .
     git commit -m "Updating with latest documentation build"
   displayName: 'Upload doxygen-result to "libCZI-doc"-Github-repository'
