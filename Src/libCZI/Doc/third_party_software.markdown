@@ -1,4 +1,4 @@
-3rd party software                 {#_3rdpartysoftware}
+3rd party software                 {#thirddpartysoftware}
 ==================
 
 In the libCZI-library and its sample-code the following 3rd-party-software is used:

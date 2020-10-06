@@ -797,7 +797,7 @@ INPUT                  = ./libCZI/libCZI.h \
 							./libCZI/Doc/accessors.markdown \
 							./libCZI/Doc/multichannelcomposition.markdown \							
 							./libCZI/Doc/CZICmd_usage.markdown \
-							./libCZI/Doc/_3rd_party_software.markdown \
+							./libCZI/Doc/third_party_software.markdown \
 							./libCZI/Doc/Todos.markdown
 
 # This tag can be used to specify the character encoding of the source files
