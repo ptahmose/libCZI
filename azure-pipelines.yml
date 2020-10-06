@@ -26,3 +26,14 @@ steps:
     cd Src
     doxygen
   displayName: 'Run doxygen'
+
+- script: |
+    cd  $(Agent.TempDirectory)
+    pwd
+    git clone https://github.com/ptahmose/libCZI-doc.git
+    cd libCZI-doc
+    rsync -avu --delete "$(Build.SourcesDirectory)/Src/Build/Doxygen" .
+    git add .
+    git commit -m "Updating with latest documentation build"
+  displayName: 'Upload doxygen-result to "libCZI-doc"-Github-repository'
+
