@@ -6,11 +6,11 @@ namespace libCZI
     class IQueryCondition
     {
     protected:
-        IQueryCondition() {};
+        IQueryCondition() = default;
         IQueryCondition(IQueryCondition const&) = delete;
         IQueryCondition& operator=(IQueryCondition const&) = delete;
     public:
-        virtual ~IQueryCondition() {};
+        virtual ~IQueryCondition() = default;
     };
 
     /// This structure gathers options for the query-construction.
@@ -20,14 +20,9 @@ namespace libCZI
         /// a dimension not existent on a subblock.
         enum class HandlingOfNonExistentDimensions
         {
-            ///< A condition involving a non-existent dimension evaluates to true.
-            EvaluateToTrue,
-
-            ///< A condition involving a non-existent dimension evaluates to false.
-            EvaluateToFalse,
-
-            ///< A condition involving a non-existent dimension results in an error.
-            Error
+            EvaluateToTrue,     ///< A condition involving a non-existent dimension evaluates to true.
+            EvaluateToFalse,    ///< A condition involving a non-existent dimension evaluates to false.
+            Error               ///< A condition involving a non-existent dimension results in an error.
         };
 
         /// This field describes how "non existent dimensions" are treated in a query expression.
