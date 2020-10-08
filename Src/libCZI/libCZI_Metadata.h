@@ -98,7 +98,7 @@ namespace libCZI
 
 		/// Attempts to parse an XmlDateTime from the given string. The string needs to
 		/// conform to ISO8601.
-		/// \param 		    szw		    The string to parse.
+		/// \param 		    sz		    The string to parse.
 		/// \param [in,out] ptrDateTime If non-null and the parsing was successful, the information will be put here.
 		/// \returns True if it succeeds, false if it fails.
 		static bool TryParse(const char* sz, XmlDateTime* ptrDateTime);
@@ -736,6 +736,9 @@ namespace libCZI
 		/// \returns The "dimension t" information.
 		virtual std::shared_ptr<IDimensionTInfo> GetDimensionTInfo() = 0;
 
+		/// Gets information about the "dimension C" (from the Dimension/Channels metadata node). If this node is not
+		/// available, an empty pointer is returned.
+		/// \returns The "channels dimension" information.
 		virtual std::shared_ptr<IDimensionsChannelsInfo> GetDimensionChannelsInfo() = 0;
 
 		/// Gets the display settings.
@@ -754,6 +757,9 @@ namespace libCZI
 			this->EnumDimensions([&](DimensionIndex i)->bool {vec.push_back(i); return true; });
 			return vec;
 		}
+
+		ICziMultiDimensionDocumentInfo(const ICziMultiDimensionDocumentInfo&) = delete;
+		ICziMultiDimensionDocumentInfo& operator=(ICziMultiDimensionDocumentInfo const&) = delete;
 	};
 
 	/// This interface provides read-only access to an XML-node.
