@@ -155,7 +155,7 @@ namespace libCZI
 		///
 		/// \param compressionMode The pixel-type.
 		///
-		/// \return A pointer to a static string. Will always be non-null (even in case of an invalid value for <tt>compressionMode</tt>.
+		/// \return A pointer to a static string. Will always be non-null (even in case of an invalid value for <tt>compressionMode</tt>).
 		static const char* CompressionModeToInformalString(libCZI::CompressionMode compressionMode);
 
 		/// Get a string representation of the specified coordinate.
