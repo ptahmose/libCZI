@@ -28,33 +28,35 @@
 
 namespace libCZI
 {
+    /// Values that represent the type of a channel.
 	enum class DimensionChannelChannelType : std::uint8_t
 	{
-		Heightmap,
-		PalHR,
-		PalWidefield,
-		SimHR,
-		SimWidefield,
-		SimDWF,
-		AiryScanSum,
-		AiryScanRawSr,
-		AiryScanRaw,
-		AiryScanSr,
-		AiryScanVp,
-		AiryScanMb,
-		AiryScanRingSheppardSum,
-		OnlineUnmixing,
-		Unspecified
+		Heightmap,					///< This channel represents a heightmap. Note that additional restrictions apply when declaring a channel as heightmap.
+		PalHR,						///< meaning unknown 
+		PalWidefield,				///< meaning unknown 
+		SimHR,						///< meaning unknown 
+		SimWidefield,				///< meaning unknown 
+		SimDWF,						///< meaning unknown 
+		AiryScanSum,				///< This channel contains a processed (combined) super-resolution from an Airy-scan-acquisition in draft quality.
+		AiryScanRawSr,				///< This channel contains the images of all sensors in the Airy-Scan-sensor-array.
+		AiryScanRaw,				///< This channel contains the images of all sensors in the Airy-Scan-sensor-array.
+		AiryScanSr,					///< This channel contains the (processed) super-resolution image.
+		AiryScanVp,					///< This channel contains the (processed) "virtual pinhole" image.
+		AiryScanMb,					///< This channel contains the (processed) "multi-beam" image.
+		AiryScanRingSheppardSum,	///< This channel contains the Sheppard-sum created from 4 fiber-rings.
+		OnlineUnmixing,				///< This channel contains the result of an online unmixing acquisition with a laser-scanning microscope.
+		Unspecified					///< Unspecified type.
 	};
 
+    /// Values that represent the acquisition mode of a channel.
 	enum class DimensionChannelAcquisitionMode : std::uint8_t
 	{
-		WideField,
-		LaserScanningConfocalMicroscopy,
-		SpinningDiskConfocal,
-		SlitScanConfocal,
-		MultiPhotonMicroscopy,
-		StructuredIllumination,
+		WideField,							///< The channel is a widefield image.
+		LaserScanningConfocalMicroscopy,	///< The channel is an image from an LSM.
+		SpinningDiskConfocal,				///< The channel is an image from a confocal spinning-disk system.
+		SlitScanConfocal,					///< unknown
+		MultiPhotonMicroscopy,				///< The channel is an image from a multi-photon-microscopy system.
+		StructuredIllumination,				
 		SingleMoleculeImaging,
 		TotalInternalReflection,
 		FluorescenceLifetime,
@@ -156,6 +158,7 @@ namespace libCZI
 	class IDimensionChannelAiryscanSettings;
 	class IDimensionChannelRatio;
 
+    /// Information about a channel.
 	class IDimensionChannelInfo : public IAttributeId, public IAttributeName
 	{
 	public:
@@ -555,7 +558,7 @@ namespace libCZI
 
 		/// Specifies the source operands S2 for an online calculation. The vector contains
 		/// references to channels (ChannelRefs).
-		/// \param [in,out] source1 If non-null and the property is available, it will be put here.
+		/// \param [in,out] source2 If non-null and the property is available, it will be put here.
 		/// \returns True if it succeeds, false otherwise.
 		virtual bool TryGetSource2(std::vector<std::wstring>* source2) = 0;
 
