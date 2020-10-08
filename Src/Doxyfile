@@ -789,6 +789,8 @@ INPUT                  = ./libCZI/libCZI.h \
                         ./libCZI/libCZI_Pixels.h \
                         ./libCZI/libCZI_Site.h \
                         ./libCZI/libCZI_Utilities.h \
+                        ./libCZI/libCZI_Metadata.h \
+                        ./libCZI/libCZI_Metadata2.h \
                         ./libCZI/libCZI_Query.h \
 							          ./libCZI/Doc/mainpage.markdown \
 							          ./libCZI/Doc/building_libCZI.markdown \

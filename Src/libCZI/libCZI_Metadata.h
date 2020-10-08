@@ -757,9 +757,6 @@ namespace libCZI
 			this->EnumDimensions([&](DimensionIndex i)->bool {vec.push_back(i); return true; });
 			return vec;
 		}
-
-		ICziMultiDimensionDocumentInfo(const ICziMultiDimensionDocumentInfo&) = delete;
-		ICziMultiDimensionDocumentInfo& operator=(ICziMultiDimensionDocumentInfo const&) = delete;
 	};
 
 	/// This interface provides read-only access to an XML-node.
