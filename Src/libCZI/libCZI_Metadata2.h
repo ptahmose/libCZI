@@ -51,52 +51,56 @@ namespace libCZI
     /// Values that represent the acquisition mode of a channel.
 	enum class DimensionChannelAcquisitionMode : std::uint8_t
 	{
-		WideField,							///< The channel is a widefield image.
-		LaserScanningConfocalMicroscopy,	///< The channel is an image from an LSM.
-		SpinningDiskConfocal,				///< The channel is an image from a confocal spinning-disk system.
-		SlitScanConfocal,					///< unknown
-		MultiPhotonMicroscopy,				///< The channel is an image from a multi-photon-microscopy system.
-		StructuredIllumination,				
-		SingleMoleculeImaging,
-		TotalInternalReflection,
-		FluorescenceLifetime,
-		SpectralImaging,
-		FluorescenceCorrelationSpectroscopy,
-		NearFieldScanningOpticalMicroscopy,
-		SecondHarmonicGenerationImaging,
-		PALM,
-		STORM,
-		STED,
-		TIRF,
-		FSM,
-		LCM,
-		SPIM,
-		SEM,
-		ApertureCorrelation,
-		Other
+		WideField,							///< The channel contains images from wide field microscopy.
+		LaserScanningConfocalMicroscopy,	///< The channel contains images from laser-scanning-confocal microscopy.
+		SpinningDiskConfocal,				///< The channel contains images from a confocal spinning-disk system.
+		SlitScanConfocal,					///< meaning unknown
+		MultiPhotonMicroscopy,				///< The channel contains images an image from a multi-photon-microscopy system.
+		StructuredIllumination,				///< The channel contains images from structured-illumination microscopy system.
+		SingleMoleculeImaging,				///< meaning unknown
+		TotalInternalReflection,			///< The channel contains images from a TIRF microscopy system.
+		FluorescenceLifetime,				///< meaning unknown
+		SpectralImaging,					///< meaning unknown
+		FluorescenceCorrelationSpectroscopy,///< meaning unknown
+		NearFieldScanningOpticalMicroscopy, ///< meaning unknown
+		SecondHarmonicGenerationImaging,	///< The channel contains images from Second harmonic imaging microscopy (SHIM).
+		PALM,								///< The channel contains images from photo-activation localization microscopy.
+		STORM,								///< The channel contains images from stochastic optical reconstruction microscopy.
+		STED,								///< The channel contains images from stimulated emission depletion microscopy.
+		TIRF,								///< The channel contains images from total internal reflection fluorescence (TIRFM).
+		FSM,								///< The channel contains images from Fluorescence speckle microscopy.
+		LCM,								///< The channel contains images from laser capture micro dissection.
+		SPIM,								///< The channel contains images from selective-plane-illumination microscopy.
+		SEM,								///< The channel contains images from scanning electron microscopy.
+		FIB,								///< The channel contains images from focus ion beam microscopy.
+		FIB_SEM,							///< The channel contains images from focus ion beam and scanning electron microscopy.
+		ApertureCorrelation,				///< The channel contains image from aperture correlation (a specific application of Structured Illumination).
+		Other								///< Some other type of image formation.
 	};
 
+    /// Values that represent the method of illumination used to capture the channel.
 	enum class DimensionChannelIlluminationType : std::uint8_t
 	{
-		Transmitted,
-		Epifluorescence,
-		Oblique,
-		NonLinear,
-		Other
+		Transmitted,		///< Transmitted light was used.
+		Epifluorescence,	///< Objective was used to bring light to the specimen.
+		Oblique,			///< Oblique light was used.
+		NonLinear,			///< meaning unknown
+		Other				///< Some other type of illumination was used.
 	};
 
+    /// Values that represent a contrast method, a technique used to achieve contrast, for the images in a channel.
 	enum class DimensionChannelContrastMethod : std::uint8_t
 	{
-		Brightfield,
-		Phase,
-		DIC,
-		HoffmanModulation,
-		ObliqueIllumination,
-		PolarizedLight,
-		Darkfield,
-		Fluorescence,
-		MultiPhotonFluorescence,
-		Other
+		Brightfield,					///< Bright filed micrsocopy was used.
+		Phase,							///< unknown meaning
+		DIC,							///< Differential Interference Contrast was used.
+		HoffmanModulation,				///< Hoffman Modulation Contrast (HMC) was used.
+		ObliqueIllumination,			///< Oblique illumination was used.
+		PolarizedLight,					///< Polarization microscopy was used.
+		Darkfield,						///< Dark Field Imaging was used.
+		Fluorescence,					///< Fluorescence microscopy was used.
+		MultiPhotonFluorescence,		///< Multi-photon excitation was employed.
+		Other							///< Some other contrast method was used.
 	};
 
 	enum class DimensionChannelPinholeGeometry : std::uint8_t
