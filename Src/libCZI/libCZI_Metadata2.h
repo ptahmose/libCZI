@@ -106,14 +106,10 @@ namespace libCZI
     /// Values that represent the pinhole geometry (of the images in a channel).
     enum class DimensionChannelPinholeGeometry : std::uint8_t
     {
-        ///< An enum constant representing a circular pinhole.
-        Circular,
-
-        ///< An enum constant representing a rectangular pinhole.
-        Rectangular,
-
-        ///< An enum constant representing "some other geometry".
-        Other
+        
+        Circular,       ///< An enum constant representing a circular pinhole.
+        Rectangular,    ///< An enum constant representing a rectangular pinhole.
+        Other           ///< An enum constant representing "some other geometry".
     };
 
     /// This struct represents either a single value or a range.
@@ -136,12 +132,8 @@ namespace libCZI
         /// Values that represent the "type of information given".
         enum class InformationType
         {
-            ///< An enum constant representing that a single peak is characterized.
-            SinglePeak,
-
-
-            ///< An enum constant representing that a set of ranges are used to characterize the spectrum.
-            Ranges
+            SinglePeak, ///< An enum constant representing that a single peak is characterized.
+            Ranges      ///< An enum constant representing that a set of ranges are used to characterize the spectrum.
         };
 
         /// The type of information given.
